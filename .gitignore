@@ -1,0 +1,18 @@
+# Vector DB
+chroma_db/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Generated reports
+reports/
+
+# Environment
+.env
+*.env
+
+# OS files
+.DS_Store
+Thumbs.db
