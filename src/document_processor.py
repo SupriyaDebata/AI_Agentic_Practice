@@ -12,9 +12,9 @@ from src import config
 
 
 def _file_id(path: Path) -> str:
-    s = path.stat()
-    raw = f"{path.name}_{s.st_size}_{s.st_mtime}"
-    return hashlib.sha256(raw.encode()).hexdigest()[:20]
+    # Hash file content so the same document uploaded multiple times
+    # always produces the same ID (temp-file mtime changes on every upload).
+    return hashlib.sha256(path.read_bytes()).hexdigest()[:20]
 
 
 def extract_pdf(path: Path, filename: str) -> list[dict]:

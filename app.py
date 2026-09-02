@@ -144,7 +144,13 @@ if clear_btn:
     st.session_state.history = []
     st.rerun()
 
+# History slot — created here so we can clear it before streaming starts,
+# preventing the previous run's entries from showing during the stream.
+history_slot = st.empty()
+
 if st.session_state.get("ask_btn") and question.strip():
+    history_slot.empty()   # wipe old history from screen immediately
+
     try:
         stream, citations = get_answer(question.strip(), COLLECTION)
     except Exception as e:
@@ -168,14 +174,15 @@ if st.session_state.get("ask_btn") and question.strip():
 
 # ── History ────────────────────────────────────────────────────────────────────
 
-for entry in reversed(st.session_state.history):
-    st.markdown(f"**You:** {entry['q']}")
-    st.markdown(entry["a"])
-    if entry["c"]:
-        with st.expander(f"📎 Sources ({len(entry['c'])})"):
-            for c in entry["c"]:
-                st.markdown(
-                    f"- **{c['source']}** · Page/Sheet: {c['page']} "
-                    f"· {c['type']} · relevance: {c['score']:.0%}"
-                )
-    st.divider()
+with history_slot.container():
+    for entry in reversed(st.session_state.history):
+        st.markdown(f"**You:** {entry['q']}")
+        st.markdown(entry["a"])
+        if entry["c"]:
+            with st.expander(f"Sources ({len(entry['c'])})"):
+                for c in entry["c"]:
+                    st.markdown(
+                        f"- **{c['source']}** · Page/Sheet: {c['page']} "
+                        f"· {c['type']} · relevance: {c['score']:.0%}"
+                    )
+        st.divider()
