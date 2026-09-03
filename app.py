@@ -1,5 +1,6 @@
 """app.py — Streamlit UI: upload documents and chat with them."""
 
+import re
 import tempfile
 from pathlib import Path
 
@@ -17,19 +18,39 @@ st.title("📄 Chat On Document")
 
 COLLECTION = config.COLLECTION_NAME
 
+# Phrases that indicate the LLM could not find the answer (covers paraphrases of NO_ANSWER).
+_REFUSAL_PHRASES = (
+    config.NO_ANSWER,
+    "could not find this",
+    "cannot find this in the",
+    "not find this in the",
+    "not present in the provided",
+    "not available in the provided",
+    "not mentioned in the provided",
+    "does not contain information",
+)
+
+# Strips LLM-generated [Source: ...] inline citations — programmatic citation expander is used instead.
+_SOURCE_TAG_RE = re.compile(r'\[Source:[^\]]*\]', re.IGNORECASE)
+
 # Trigger @st.cache_resource model load at page open (not on first question).
-# The spinner "Loading AI model…" is shown automatically by the decorator.
-embed_query("warmup")  # fast after first load — model is held by st.cache_resource
+# Wrapped in cache_resource so the .encode() warmup inference runs only once,
+# not on every Streamlit rerun (every button click, widget interaction).
+@st.cache_resource(show_spinner=False)
+def _warmup_model() -> None:
+    embed_query("warmup")
+
+_warmup_model()
 
 
 # ── Cached helpers ─────────────────────────────────────────────────────────────
 
-@st.cache_data(ttl=60)
+@st.cache_data(ttl=300)
 def _ollama_ok() -> bool:
     return check_ollama()
 
 
-@st.cache_data(ttl=5)
+@st.cache_data(ttl=30)
 def _chunk_count(collection: str) -> int:
     return collection_count(collection)
 
@@ -165,10 +186,14 @@ if st.session_state.get("ask_btn") and question.strip():
             box.markdown(answer + "▌")
         box.empty()
 
-        # Strip citations on refusal
-        if config.NO_ANSWER in answer:
+        # Detect refusals — covers exact phrase AND common LLM paraphrases
+        low = answer.lower()
+        if any(p.lower() in low for p in _REFUSAL_PHRASES):
             citations = []
             answer = config.NO_ANSWER
+        else:
+            # Strip LLM-generated [Source: ...] blocks — the citation expander is authoritative
+            answer = _SOURCE_TAG_RE.sub("", answer).strip()
 
         st.session_state.history.append({"q": question.strip(), "a": answer, "c": citations})
 
@@ -176,7 +201,6 @@ if st.session_state.get("ask_btn") and question.strip():
 
 with history_slot.container():
     for entry in reversed(st.session_state.history):
-        st.markdown(f"**You:** {entry['q']}")
         st.markdown(entry["a"])
         if entry["c"]:
             with st.expander(f"Sources ({len(entry['c'])})"):

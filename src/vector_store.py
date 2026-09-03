@@ -25,11 +25,16 @@ except ImportError:
         return _client_instance
 
 
+_collection_cache: dict[str, chromadb.Collection] = {}
+
+
 def _get_collection(name: str) -> chromadb.Collection:
-    return _get_client().get_or_create_collection(
-        name=name,
-        metadata={"hnsw:space": config.CHROMA_METRIC},
-    )
+    if name not in _collection_cache:
+        _collection_cache[name] = _get_client().get_or_create_collection(
+            name=name,
+            metadata={"hnsw:space": config.CHROMA_METRIC},
+        )
+    return _collection_cache[name]
 
 
 def is_stored(file_id: str, collection: str) -> bool:
@@ -72,15 +77,24 @@ def search_chunks(
 ) -> list[dict]:
     """Search ChromaDB and return top-k results with similarity scores."""
     col = _get_collection(collection)
-    n = min(top_k, col.count())
-    if n == 0:
-        return []
-
-    raw = col.query(
-        query_embeddings=[query_vec],
-        n_results=n,
-        include=["documents", "metadatas", "distances"],
-    )
+    # Avoid calling col.count() on every query (it hits the DB every time).
+    # Try n_results=top_k directly; fall back with a count check only if ChromaDB
+    # raises because the collection has fewer items than top_k.
+    try:
+        raw = col.query(
+            query_embeddings=[query_vec],
+            n_results=top_k,
+            include=["documents", "metadatas", "distances"],
+        )
+    except Exception:
+        n = col.count()
+        if n == 0:
+            return []
+        raw = col.query(
+            query_embeddings=[query_vec],
+            n_results=min(top_k, n),
+            include=["documents", "metadatas", "distances"],
+        )
     results = []
     for doc, meta, dist in zip(
         raw["documents"][0], raw["metadatas"][0], raw["distances"][0]
@@ -105,4 +119,5 @@ def collection_count(collection: str) -> int:
 
 def delete_collection(collection: str) -> None:
     """Delete the entire collection from ChromaDB."""
+    _collection_cache.pop(collection, None)
     _get_client().delete_collection(name=collection)
