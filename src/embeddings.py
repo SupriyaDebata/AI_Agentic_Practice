@@ -1,4 +1,4 @@
-"""src/embeddings.py — Sentence-transformer embeddings for documents and queries."""
+"""src/embeddings.py -- Sentence-transformer embeddings for documents and queries."""
 
 from sentence_transformers import SentenceTransformer
 
@@ -10,7 +10,7 @@ from src import config
 try:
     import streamlit as st
 
-    @st.cache_resource(show_spinner="Loading AI model…")
+    @st.cache_resource(show_spinner="Loading AI model...")
     def _get_model() -> SentenceTransformer:
         return SentenceTransformer(config.EMBEDDING_MODEL, device=config.EMBEDDING_DEVICE)
 

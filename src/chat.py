@@ -1,4 +1,4 @@
-"""src/chat.py — LLM interaction: build grounded prompt and stream answer from Ollama."""
+"""src/chat.py -- LLM interaction: build grounded prompt and stream answer from Ollama."""
 
 import json
 from typing import Iterator
@@ -43,7 +43,7 @@ def _stream_ollama(prompt: str) -> Iterator[str]:
                 if chunk.get("done"):
                     break
     except requests.exceptions.ConnectionError:
-        yield "\n\n[Ollama is offline — run: ollama serve]"
+        yield "\n\n[Ollama is offline -- run: ollama serve]"
     except Exception as e:
         yield f"\n\n[Error: {e}]"
 
@@ -51,22 +51,23 @@ def _stream_ollama(prompt: str) -> Iterator[str]:
 def get_answer(
     question: str,
     collection: str,
-) -> tuple[Iterator[str], list[dict]]:
+) -> tuple[Iterator[str], list[dict], list[str]]:
     """Retrieve context and stream a grounded answer from Ollama.
 
-    Returns (token_stream, citations). If no relevant context is found,
-    returns a no-answer generator with empty citations (no LLM call made).
+    Returns (token_stream, citations, context_texts).
+    If no relevant context is found returns a no-answer generator with empty
+    citations and context_texts (no LLM call made).
     """
-    context, citations = get_context(question, collection)
+    context, citations, context_texts = get_context(question, collection)
 
     if not context:
         def _no_context() -> Iterator[str]:
             yield config.NO_ANSWER
-        return _no_context(), []
+        return _no_context(), [], []
 
     prompt = config.PROMPT_TEMPLATE.format(
         system=config.SYSTEM_PROMPT,
         context=context,
         question=question,
     )
-    return _stream_ollama(prompt), citations
+    return _stream_ollama(prompt), citations, context_texts

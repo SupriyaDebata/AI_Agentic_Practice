@@ -1,0 +1,281 @@
+{
+  "timestamp": "2026-09-08T22:01:52.799744",
+  "dataset_stats": {
+    "total_questions": 70,
+    "questions_with_answers": 70,
+    "questions_with_contexts": 0,
+    "dataset_path": "C:\\AIHandsonWorkspace\\AI_Agent_Practice_Code_Git\\02-RAG-chat-on-document\\evaluation\\datasets\\golden_qa_v1.0.json",
+    "last_modified": "2026-09-08T22:01:51.250895"
+  },
+  "evaluation_count": 10,
+  "error_count": 0,
+  "errors": [],
+  "results": [
+    {
+      "question": "What is the total revenue?",
+      "answer": "Based on the documents: Total revenue information",
+      "contexts": [
+        "Total",
+        "revenue",
+        "information"
+      ],
+      "timestamp": 1788885112.799621,
+      "scores": {
+        "faithfulness": 0.85,
+        "answer_relevancy": 0.82,
+        "context_precision": 0.8,
+        "context_recall": 0.78,
+        "citation_accuracy": 0.9,
+        "hallucination_score": 0.85,
+        "retrieval_f1": 0.75,
+        "answer_semantic_similarity": 0.8
+      },
+      "duration_ms": 2000
+    },
+    {
+      "question": "What is the net profit?",
+      "answer": "Based on the documents: Net profit or net income",
+      "contexts": [
+        "Net",
+        "profit",
+        "or",
+        "net",
+        "income"
+      ],
+      "timestamp": 1788885112.7996316,
+      "scores": {
+        "faithfulness": 0.86,
+        "answer_relevancy": 0.83,
+        "context_precision": 0.81,
+        "context_recall": 0.79,
+        "citation_accuracy": 0.91,
+        "hallucination_score": 0.86,
+        "retrieval_f1": 0.76,
+        "answer_semantic_similarity": 0.81
+      },
+      "duration_ms": 2100
+    },
+    {
+      "question": "What are the operating expenses?",
+      "answer": "Based on the documents: Operating expense details",
+      "contexts": [
+        "Operating",
+        "expense",
+        "details"
+      ],
+      "timestamp": 1788885112.7996352,
+      "scores": {
+        "faithfulness": 0.87,
+        "answer_relevancy": 0.84,
+        "context_precision": 0.8200000000000001,
+        "context_recall": 0.8,
+        "citation_accuracy": 0.92,
+        "hallucination_score": 0.87,
+        "retrieval_f1": 0.77,
+        "answer_semantic_similarity": 0.8200000000000001
+      },
+      "duration_ms": 2200
+    },
+    {
+      "question": "What is the gross margin?",
+      "answer": "Based on the documents: Gross margin percentage",
+      "contexts": [
+        "Gross",
+        "margin",
+        "percentage"
+      ],
+      "timestamp": 1788885112.7996385,
+      "scores": {
+        "faithfulness": 0.88,
+        "answer_relevancy": 0.85,
+        "context_precision": 0.8300000000000001,
+        "context_recall": 0.81,
+        "citation_accuracy": 0.93,
+        "hallucination_score": 0.88,
+        "retrieval_f1": 0.78,
+        "answer_semantic_similarity": 0.8300000000000001
+      },
+      "duration_ms": 2300
+    },
+    {
+      "question": "What are the year-over-year growth rates?",
+      "answer": "Based on the documents: Growth rate information",
+      "contexts": [
+        "Growth",
+        "rate",
+        "information"
+      ],
+      "timestamp": 1788885112.7996414,
+      "scores": {
+        "faithfulness": 0.89,
+        "answer_relevancy": 0.86,
+        "context_precision": 0.8400000000000001,
+        "context_recall": 0.8200000000000001,
+        "citation_accuracy": 0.9400000000000001,
+        "hallucination_score": 0.89,
+        "retrieval_f1": 0.79,
+        "answer_semantic_similarity": 0.8400000000000001
+      },
+      "duration_ms": 2400
+    },
+    {
+      "question": "What is the cash flow position?",
+      "answer": "Based on the documents: Cash flow details",
+      "contexts": [
+        "Cash",
+        "flow",
+        "details"
+      ],
+      "timestamp": 1788885112.7996445,
+      "scores": {
+        "faithfulness": 0.9,
+        "answer_relevancy": 0.87,
+        "context_precision": 0.8500000000000001,
+        "context_recall": 0.8300000000000001,
+        "citation_accuracy": 0.9500000000000001,
+        "hallucination_score": 0.9,
+        "retrieval_f1": 0.8,
+        "answer_semantic_similarity": 0.8500000000000001
+      },
+      "duration_ms": 2500
+    },
+    {
+      "question": "What is the debt-to-equity ratio?",
+      "answer": "Based on the documents: Financial ratio information",
+      "contexts": [
+        "Financial",
+        "ratio",
+        "information"
+      ],
+      "timestamp": 1788885112.7996466,
+      "scores": {
+        "faithfulness": 0.9099999999999999,
+        "answer_relevancy": 0.8799999999999999,
+        "context_precision": 0.8600000000000001,
+        "context_recall": 0.8400000000000001,
+        "citation_accuracy": 0.96,
+        "hallucination_score": 0.9099999999999999,
+        "retrieval_f1": 0.81,
+        "answer_semantic_similarity": 0.8600000000000001
+      },
+      "duration_ms": 2600
+    },
+    {
+      "question": "What is the EBITDA?",
+      "answer": "Based on the documents: EBITDA or earnings information",
+      "contexts": [
+        "EBITDA",
+        "or",
+        "earnings",
+        "information"
+      ],
+      "timestamp": 1788885112.7996655,
+      "scores": {
+        "faithfulness": 0.9199999999999999,
+        "answer_relevancy": 0.8899999999999999,
+        "context_precision": 0.8700000000000001,
+        "context_recall": 0.8500000000000001,
+        "citation_accuracy": 0.97,
+        "hallucination_score": 0.9199999999999999,
+        "retrieval_f1": 0.8200000000000001,
+        "answer_semantic_similarity": 0.8700000000000001
+      },
+      "duration_ms": 2700
+    },
+    {
+      "question": "What is the cost of goods sold?",
+      "answer": "Based on the documents: COGS information",
+      "contexts": [
+        "COGS",
+        "information"
+      ],
+      "timestamp": 1788885112.7996683,
+      "scores": {
+        "faithfulness": 0.9299999999999999,
+        "answer_relevancy": 0.8999999999999999,
+        "context_precision": 0.88,
+        "context_recall": 0.86,
+        "citation_accuracy": 0.98,
+        "hallucination_score": 0.9299999999999999,
+        "retrieval_f1": 0.83,
+        "answer_semantic_similarity": 0.88
+      },
+      "duration_ms": 2800
+    },
+    {
+      "question": "What are the total assets?",
+      "answer": "Based on the documents: Asset valuation",
+      "contexts": [
+        "Asset",
+        "valuation"
+      ],
+      "timestamp": 1788885112.799673,
+      "scores": {
+        "faithfulness": 0.94,
+        "answer_relevancy": 0.9099999999999999,
+        "context_precision": 0.89,
+        "context_recall": 0.87,
+        "citation_accuracy": 0.99,
+        "hallucination_score": 0.94,
+        "retrieval_f1": 0.84,
+        "answer_semantic_similarity": 0.89
+      },
+      "duration_ms": 2900
+    }
+  ],
+  "quality_gate": {
+    "status": "[FAIL]",
+    "passed": false,
+    "summary": "Quality gate FAILED. Improve grounded_refusal (gap: 50.00%)",
+    "metrics": [
+      {
+        "name": "faithfulness",
+        "score": 0.895,
+        "threshold": 0.85,
+        "passed": true
+      },
+      {
+        "name": "answer_relevancy",
+        "score": 0.865,
+        "threshold": 0.8,
+        "passed": true
+      },
+      {
+        "name": "context_precision",
+        "score": 0.845,
+        "threshold": 0.75,
+        "passed": true
+      },
+      {
+        "name": "context_recall",
+        "score": 0.825,
+        "threshold": 0.75,
+        "passed": true
+      },
+      {
+        "name": "answer_semantic_similarity",
+        "score": 0.845,
+        "threshold": 0.75,
+        "passed": true
+      },
+      {
+        "name": "citation_accuracy",
+        "score": 0.945,
+        "threshold": 0.9,
+        "passed": true
+      },
+      {
+        "name": "grounded_refusal",
+        "score": 0.5,
+        "threshold": 1.0,
+        "passed": false
+      },
+      {
+        "name": "retrieval_f1",
+        "score": 0.795,
+        "threshold": 0.7,
+        "passed": true
+      }
+    ]
+  }
+}

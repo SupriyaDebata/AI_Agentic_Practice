@@ -1,4 +1,4 @@
-"""src/document_processor.py — Extract text, tables, and structured data from PDF and Excel files."""
+"""src/document_processor.py -- Extract text, tables, and structured data from PDF and Excel files."""
 
 import hashlib
 from pathlib import Path
@@ -53,7 +53,7 @@ def extract_pdf(path: Path, filename: str) -> list[dict]:
             if config.PDF_EXTRACT_IMAGES and fp.get_images(full=True):
                 out.append({
                     **base, "type": "image", "idx": 0,
-                    "text": f"[Image/chart on page {page_num} of {filename} — not extractable as text.]",
+                    "text": f"[Image/chart on page {page_num} of {filename} -- not extractable as text.]",
                 })
     finally:
         fitz_doc.close()
@@ -67,7 +67,7 @@ def _aggregate_chunk(df: pd.DataFrame, id_col: str, sheet: str, base: dict) -> d
     """Return a pre-computed aggregate chunk (highest/lowest/total per numeric column).
 
     Pre-computing these facts at ingest time means the LLM never has to scan raw
-    rows to answer 'which X had the highest Y' — the answer is stated explicitly.
+    rows to answer 'which X had the highest Y' -- the answer is stated explicitly.
     """
     lines = [f"Aggregate statistics for sheet '{sheet}' (source: {base['source']}):"]
     for col_name in df.columns:
@@ -130,7 +130,7 @@ def extract_excel(path: Path, filename: str) -> list[dict]:
         base = {"source": filename, "page": sheet, "file_id": fid, "type": "excel"}
         id_col = df.columns[0]  # first column treated as the row identifier (Region, Product, etc.)
 
-        # row_as_text — one chunk per row, best for record lookups
+        # row_as_text -- one chunk per row, best for record lookups
         for i, (_, row) in enumerate(df.iterrows()):
             parts = [
                 f"{col}: {row[col]}"
@@ -140,14 +140,14 @@ def extract_excel(path: Path, filename: str) -> list[dict]:
             if parts:
                 out.append({**base, "strategy": "row", "idx": i, "text": " | ".join(parts)})
 
-        # markdown_table — full table in one chunk, best for comparisons
+        # markdown_table -- full table in one chunk, best for comparisons
         rpc = config.EXCEL_ROWS_PER_CHUNK
         for i, start in enumerate(range(0, len(df), rpc)):
             md = df.iloc[start:start + rpc].to_markdown(index=False)
             if md and md.strip():
                 out.append({**base, "strategy": "table", "idx": i, "text": md})
 
-        # column_wise — one chunk per column paired with row identifier, best for targeted lookups
+        # column_wise -- one chunk per column paired with row identifier, best for targeted lookups
         # Previously stored only raw values; now includes the identifier so the LLM knows
         # which row each value belongs to (e.g. "West: 4500 | East: 3600 | North: 1200").
         for i, col_name in enumerate(df.columns):
@@ -164,7 +164,7 @@ def extract_excel(path: Path, filename: str) -> list[dict]:
             if text.strip():
                 out.append({**base, "strategy": "col", "idx": i, "text": text})
 
-        # aggregate — pre-computed highest/lowest/total per numeric column
+        # aggregate -- pre-computed highest/lowest/total per numeric column
         agg = _aggregate_chunk(df, id_col, sheet, base)
         if agg:
             out.append(agg)

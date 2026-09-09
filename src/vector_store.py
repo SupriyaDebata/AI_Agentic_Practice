@@ -1,4 +1,4 @@
-"""src/vector_store.py — ChromaDB operations: store, search, manage collections."""
+"""src/vector_store.py -- ChromaDB operations: store, search, manage collections."""
 
 from pathlib import Path
 

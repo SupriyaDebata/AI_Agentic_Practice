@@ -1,4 +1,4 @@
-"""src/retriever.py — Semantic retrieval: embed → dual-search → filter → context."""
+"""src/retriever.py -- Semantic retrieval: embed -> dual-search -> filter -> context."""
 
 from src import config
 from src.embeddings import embed_query
@@ -18,7 +18,7 @@ _STOP_WORDS = {
 def _to_noun_phrase(question: str) -> str:
     """Strip stop words to produce a noun-phrase that matches document headings better.
 
-    'Can I work remotely for the entire week?' → 'work remotely entire week'
+    'Can I work remotely for the entire week?' -> 'work remotely entire week'
     """
     tokens = [t.strip("?.,!") for t in question.lower().split()]
     return " ".join(t for t in tokens if t and t not in _STOP_WORDS)
@@ -26,11 +26,11 @@ def _to_noun_phrase(question: str) -> str:
 
 def _search_and_merge(question: str, collection: str, top_k: int) -> list[dict]:
     """Run two search passes and merge by best score per unique chunk."""
-    # Pass 1 — full question (captures intent and sentence context)
+    # Pass 1 -- full question (captures intent and sentence context)
     vec_full = embed_query(question)
     hits_full = search_chunks(vec_full, collection, top_k)
 
-    # Pass 2 — noun-phrase (matches section headings and key terms more directly)
+    # Pass 2 -- noun-phrase (matches section headings and key terms more directly)
     noun_phrase = _to_noun_phrase(question)
     hits_kw: list[dict] = []
     if noun_phrase and noun_phrase != question.lower().strip():
@@ -47,22 +47,24 @@ def _search_and_merge(question: str, collection: str, top_k: int) -> list[dict]:
     return sorted(best.values(), key=lambda h: h["score"], reverse=True)[:top_k]
 
 
-def get_context(question: str, collection: str) -> tuple[str, list[dict]]:
-    """Return (context_string, citations) for the given question.
+def get_context(question: str, collection: str) -> tuple[str, list[dict], list[str]]:
+    """Return (context_string, citations, context_texts) for the given question.
 
     context_string: labelled excerpts ready to paste into the LLM prompt.
     citations:      deduplicated list of {source, page, type, score}.
+    context_texts:  raw text of each retrieved chunk (for evaluation metrics).
     """
     hits = _search_and_merge(question, collection, config.TOP_K)
 
-    # Apply similarity threshold — filter after merging both passes
+    # Apply similarity threshold -- filter after merging both passes
     hits = [h for h in hits if h["score"] >= config.SIMILARITY_THRESHOLD]
 
     if not hits:
-        return "", []
+        return "", [], []
 
     # Build context string capped at MAX_CONTEXT chars
     parts: list[str] = []
+    included_texts: list[str] = []
     total = 0
     for i, h in enumerate(hits, 1):
         label = _TYPE_LABEL.get(h["type"], h["type"])
@@ -70,6 +72,7 @@ def get_context(question: str, collection: str) -> tuple[str, list[dict]]:
         if total + len(block) > config.MAX_CONTEXT:
             break
         parts.append(block)
+        included_texts.append(h["text"])
         total += len(block)
     context = "\n\n---\n\n".join(parts)
 
@@ -87,4 +90,4 @@ def get_context(question: str, collection: str) -> tuple[str, list[dict]]:
                 "score":  h["score"],
             })
 
-    return context, citations
+    return context, citations, included_texts

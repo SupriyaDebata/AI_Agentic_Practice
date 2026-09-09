@@ -1,0 +1,252 @@
+[
+  {
+    "id": 1,
+    "question": "How many days of annual leave do full-time employees receive per year?",
+    "expected_answer": "Full-time employees receive 24 days of annual leave per calendar year.",
+    "contexts": [
+      "Full-time employees receive 24 days of annual leave per calendar year. Employees may carry forward a maximum of 10 unused annual-leave days into the following calendar year."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Employee_Handbook.pdf"
+  },
+  {
+    "id": 2,
+    "question": "How many days of sick leave are employees entitled to each year?",
+    "expected_answer": "Employees receive 12 days of sick leave per calendar year.",
+    "contexts": [
+      "Employees receive 12 days of sick leave per calendar year. Sick leave should be reported to the manager as soon as reasonably possible."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Employee_Handbook.pdf"
+  },
+  {
+    "id": 3,
+    "question": "How many unused annual leave days can an employee carry forward to the next year?",
+    "expected_answer": "Employees may carry forward a maximum of 10 unused annual-leave days into the following calendar year.",
+    "contexts": [
+      "Full-time employees receive 24 days of annual leave per calendar year. Employees may carry forward a maximum of 10 unused annual-leave days into the following calendar year."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Employee_Handbook.pdf"
+  },
+  {
+    "id": 4,
+    "question": "How many days per week can employees work from home?",
+    "expected_answer": "Employees may work remotely up to 3 days per week, subject to team requirements and manager approval.",
+    "contexts": [
+      "Employees may work remotely up to 3 days per week, subject to team requirements and manager approval. Production support rotations may require employees to work from the office."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Employee_Handbook.pdf"
+  },
+  {
+    "id": 5,
+    "question": "What employee benefits does the company provide?",
+    "expected_answer": "Eligible employees receive medical insurance, accidental coverage, and access to the company's employee assistance program.",
+    "contexts": [
+      "Eligible employees receive medical insurance, accidental coverage, and access to the company's employee assistance program."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Employee_Handbook.pdf"
+  },
+  {
+    "id": 6,
+    "question": "What travel class is the standard for flights under 6 hours?",
+    "expected_answer": "Economy class is the standard for flights under 6 hours.",
+    "contexts": [
+      "Domestic business travel requires manager approval. International business travel requires manager and business-unit approval. Economy class is the standard for flights under 6 hours."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Employee_Handbook.pdf"
+  },
+  {
+    "id": 7,
+    "question": "What approval is required for international business travel?",
+    "expected_answer": "International business travel requires manager and business-unit approval.",
+    "contexts": [
+      "Domestic business travel requires manager approval. International business travel requires manager and business-unit approval."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Employee_Handbook.pdf"
+  },
+  {
+    "id": 8,
+    "question": "What is the minimum password length required by company policy?",
+    "expected_answer": "Passwords must contain at least 12 characters and should include a mixture of uppercase letters, lowercase letters, numbers, and symbols.",
+    "contexts": [
+      "Passwords must contain at least 12 characters and should include a mixture of uppercase letters, lowercase letters, numbers, and symbols. Passwords must not be shared with another person."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Company_Policy.pdf"
+  },
+  {
+    "id": 9,
+    "question": "After how many failed login attempts is an account locked?",
+    "expected_answer": "An account is locked after 5 consecutive failed authentication attempts.",
+    "contexts": [
+      "An account is locked after 5 consecutive failed authentication attempts. The employee must follow the approved account-recovery process to regain access."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Company_Policy.pdf"
+  },
+  {
+    "id": 10,
+    "question": "What is the maximum expense amount a manager alone can approve?",
+    "expected_answer": "Expenses up to INR 10,000 may be approved by the employee's manager.",
+    "contexts": [
+      "Expenses up to INR 10,000 may be approved by the employee's manager. Expenses above INR 10,000 require manager and department-head approval."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Company_Policy.pdf"
+  },
+  {
+    "id": 11,
+    "question": "Who must approve expenses above INR 10,000?",
+    "expected_answer": "Expenses above INR 10,000 require manager and department-head approval.",
+    "contexts": [
+      "Expenses up to INR 10,000 may be approved by the employee's manager. Expenses above INR 10,000 require manager and department-head approval."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Company_Policy.pdf"
+  },
+  {
+    "id": 12,
+    "question": "Who should security incidents be reported to?",
+    "expected_answer": "Security incidents should be reported to the security operations team as soon as they are identified.",
+    "contexts": [
+      "Security incidents should be reported to the security operations team as soon as they are identified. The report should include the time, affected system, and a short description."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Company_Policy.pdf"
+  },
+  {
+    "id": 13,
+    "question": "What is the operating temperature range of the Smart Thermostat X100?",
+    "expected_answer": "The operating temperature range of the Smart Thermostat X100 is -10°C to 55°C.",
+    "contexts": [
+      "Smart Thermostat X100 — Product Specification. Specification Value. Operating temperature range: -10°C to 55°C. Storage temperature range: -20°C to 70°C. Power supply: 24 VAC. Connectivity: Wi-Fi 2.4 GHz. Display: 4.3 inch LCD. Warranty: 2 years."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Product_Specification.pdf"
+  },
+  {
+    "id": 14,
+    "question": "What is the warranty period for the Smart Thermostat X100?",
+    "expected_answer": "The Smart Thermostat X100 has a 2-year warranty.",
+    "contexts": [
+      "Specification Value. Warranty: 2 years."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Product_Specification.pdf"
+  },
+  {
+    "id": 15,
+    "question": "What type of connectivity does the Smart Thermostat X100 support?",
+    "expected_answer": "The Smart Thermostat X100 supports Wi-Fi 2.4 GHz connectivity.",
+    "contexts": [
+      "Specification Value. Connectivity: Wi-Fi 2.4 GHz."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Product_Specification.pdf"
+  },
+  {
+    "id": 16,
+    "question": "What is the power supply requirement of the Smart Thermostat X100?",
+    "expected_answer": "The Smart Thermostat X100 requires a 24 VAC power supply.",
+    "contexts": [
+      "Specification Value. Power supply: 24 VAC."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Product_Specification.pdf"
+  },
+  {
+    "id": 17,
+    "question": "Which region has the highest revenue in sales data?",
+    "expected_answer": "The West region has the highest revenue of 840,000.",
+    "contexts": [
+      "Region Q1 Units Q2 Units Q3 Units Revenue. East 3200 3400 3600 720000. West 3500 3900 4200 840000. North 2800 3000 3100 620000. South 3300 3500 3800 760000."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Sales_Data.xlsx"
+  },
+  {
+    "id": 18,
+    "question": "Which region has the lowest revenue?",
+    "expected_answer": "The North region has the lowest revenue of 620,000.",
+    "contexts": [
+      "Region Q1 Units Q2 Units Q3 Units Revenue. East 3200 3400 3600 720000. West 3500 3900 4200 840000. North 2800 3000 3100 620000. South 3300 3500 3800 760000."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Sales_Data.xlsx"
+  },
+  {
+    "id": 19,
+    "question": "Which product had the highest units sold in Q3?",
+    "expected_answer": "Thermostat X100 had the highest units sold in Q3 with 1,200 units in the West region.",
+    "contexts": [
+      "Product Category Units Sold Region Quarter. Thermostat X100 Smart Home 1200 West Q3. Thermostat Mini Smart Home 900 East Q3. Sensor S2 Accessory 650 South Q3. Gateway G1 Accessory 480 North Q3."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Sales_Data.xlsx"
+  },
+  {
+    "id": 20,
+    "question": "What product categories are available in the product sales data?",
+    "expected_answer": "Two product categories are available: Smart Home (Thermostat X100, Thermostat Mini) and Accessory (Sensor S2, Gateway G1).",
+    "contexts": [
+      "Product Category Units Sold Region Quarter. Thermostat X100 Smart Home 1200 West Q3. Thermostat Mini Smart Home 900 East Q3. Sensor S2 Accessory 650 South Q3. Gateway G1 Accessory 480 North Q3."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Sales_Data.xlsx"
+  },
+  {
+    "id": 21,
+    "question": "Which customer is currently inactive?",
+    "expected_answer": "Sunrise Retail (Customer ID C004) from the South region, SMB segment, is currently inactive.",
+    "contexts": [
+      "Customer ID Customer Region Segment Status. C001 Apex Retail West Enterprise Active. C002 BlueMart East Mid-Market Active. C003 NorthStar Stores North Enterprise Active. C004 Sunrise Retail South SMB Inactive."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Customer_Data.xlsx"
+  },
+  {
+    "id": 22,
+    "question": "How many units of Thermostat X100 did Apex Retail order?",
+    "expected_answer": "Apex Retail (C001) ordered 300 units of Thermostat X100 in Q3.",
+    "contexts": [
+      "Order ID Customer ID Product Units Quarter. O1001 C001 Thermostat X100 300 Q3. O1002 C002 Thermostat Mini 180 Q3. O1003 C003 Thermostat X100 220 Q3. O1004 C001 Sensor S2 150 Q3."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Customer_Data.xlsx"
+  },
+  {
+    "id": 23,
+    "question": "Which customers are in the Enterprise segment?",
+    "expected_answer": "Apex Retail (West) and NorthStar Stores (North) are in the Enterprise segment.",
+    "contexts": [
+      "Customer ID Customer Region Segment Status. C001 Apex Retail West Enterprise Active. C003 NorthStar Stores North Enterprise Active."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Customer_Data.xlsx"
+  },
+  {
+    "id": 24,
+    "question": "What is the Smart Thermostat X100 designed for?",
+    "expected_answer": "The Smart Thermostat X100 is an indoor temperature controller designed for residential use. It supports Wi-Fi connectivity, programmable schedules, and remote monitoring.",
+    "contexts": [
+      "The Smart Thermostat X100 is an indoor temperature controller designed for residential use. It supports Wi-Fi connectivity, programmable schedules, and remote monitoring."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Product_Specification.pdf"
+  },
+  {
+    "id": 25,
+    "question": "What is the display size of the Smart Thermostat X100?",
+    "expected_answer": "The Smart Thermostat X100 has a 4.3 inch LCD display.",
+    "contexts": [
+      "Specification Value. Display: 4.3 inch LCD."
+    ],
+    "added_at": "2026-09-09T00:00:00",
+    "source_doc": "Product_Specification.pdf"
+  }
+]

@@ -1,4 +1,4 @@
-"""src/chunker.py — Section-aware text chunking for PDF narrative text."""
+"""src/chunker.py -- Section-aware text chunking for PDF narrative text."""
 
 import re
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -8,7 +8,7 @@ from src import config
 # Matches the start of a new section: blank line, numbered heading, or bullet
 _SECTION_BREAK = re.compile(
     r"(?:\n\s*\n)"                                    # blank line
-    r"|(?=\n\s*(?:\d+[\.\)]\s|\#{1,3}\s|\•|\-\s))",  # numbered / heading / bullet
+    r"|(?=\n\s*(?:\d+[\.\)]\s|\#{1,3}\s|\|\-\s))",  # numbered / heading / bullet
     re.MULTILINE,
 )
 
