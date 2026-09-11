@@ -1,32 +1,10 @@
-"""src/evaluation_metrics.py -- RAG evaluation metrics: RAGAS + custom metrics."""
+"""src/evaluation_metrics.py -- RAG evaluation metrics: heuristic RAGAS-style scoring."""
 
-import time
-from typing import Optional
-
-from src import config
+import re
 
 
 class MetricsCalculator:
-    """Calculate RAGAS metrics and custom metrics for RAG evaluation."""
-
-    def __init__(self):
-        self.llm = None
-        self.embedding_model = None
-        self._init_llm()
-
-    def _init_llm(self):
-        """Initialize LLM lazily to handle import errors gracefully."""
-        try:
-            from langchain_ollama import OllamaLLM
-            self.llm = OllamaLLM(
-                model=config.EVALUATION_MODEL,
-                base_url=config.EVALUATION_BASE_URL,
-                temperature=config.EVALUATION_TEMPERATURE,
-                num_predict=config.OLLAMA_MAX_TOKENS,
-            )
-        except (ImportError, Exception) as e:
-            print(f"Warning: Could not initialize RAGAS LLM: {e}")
-            self.llm = None
+    """Calculate heuristic RAGAS-style metrics for RAG evaluation."""
 
     def calculate_answer_relevancy(
         self,
@@ -35,29 +13,58 @@ class MetricsCalculator:
     ) -> float:
         """Calculate how relevant the answer is to the question (0-1)."""
         try:
-            if not self.llm:
-                return self._fallback_relevancy(question, answer)
-
-            # Simple heuristic-based relevancy when LLM not available
             return self._fallback_relevancy(question, answer)
         except Exception as e:
             print(f"Error calculating answer relevancy: {e}")
             return 0.5
 
+    # Interrogative and auxiliary words that appear in questions but NEVER in answers.
+    # Including them in q_words makes relevancy artificially low (they never intersect).
+    _QUESTION_STOP = frozenset({
+        "what", "which", "when", "where", "who", "whom", "whose", "how", "why",
+        "does", "this", "that", "your", "from", "with", "have", "been", "into",
+        "many", "much", "some", "there", "their", "they", "were", "will", "would",
+        "could", "should", "each", "give", "most", "more", "very", "also",
+    })
+
     def _fallback_relevancy(self, question: str, answer: str) -> float:
-        """Fallback 
-        heuristic for answer relevancy."""
+        """Heuristic answer relevancy: fraction of question CONTENT words present in the answer.
+
+        Excludes interrogative words (what, how, which…) that appear in questions
+        but never in answers, preventing them from unfairly lowering the score.
+        Also grants partial credit when the answer is very short (≤5 words) but
+        contains at least one question content word — short precise answers should
+        not score zero simply because they are terse.
+        """
         if not answer:
             return 0.0
 
-        q_words = set(w.lower() for w in question.split() if len(w) > 3)
-        a_words = set(w.lower() for w in answer.split() if len(w) > 3)
+        strip = lambda s: s.lower().strip("?,.'\"():")  # noqa: E731
+        q_words = set(
+            strip(w)
+            for w in question.split()
+            if len(strip(w)) > 2 and strip(w) not in self._QUESTION_STOP
+        )
+        # Include all answer words regardless of length — short numbers ("24", "5")
+        # and short names ("INR") are valid content words.
+        a_words = set(strip(w) for w in answer.split() if strip(w))
 
         if not q_words:
             return 1.0
 
-        overlap = len(q_words & a_words) / len(q_words)
-        return min(1.0, max(0.0, overlap + 0.3))  # Base score + overlap
+        overlap = len(q_words & a_words)
+        base = overlap / len(q_words)
+
+        # Partial credit floor for short precise answers:
+        # A 1-5 word answer that contains ANY question content word is at least 0.50.
+        if base == 0.0 and len(answer.split()) <= 5 and a_words:
+            # Check if any answer word is a substring of any question content word
+            # (handles abbreviations / stemming mismatches like "North" ↔ "northern")
+            for aw in a_words:
+                for qw in q_words:
+                    if aw in qw or qw in aw:
+                        return 0.50
+        return min(1.0, max(0.0, base))
 
     def calculate_faithfulness(
         self,
@@ -71,23 +78,41 @@ class MetricsCalculator:
             print(f"Error calculating faithfulness: {e}")
             return 0.5
 
+    _PREAMBLE_RE = re.compile(
+        r"^(according to|based on|from|per|as per|as stated in|as mentioned in|"
+        r"as described in|as indicated in|referring to|see|in)\s+(excerpt|source|"
+        r"document|context|passage|section|the document|the context|the excerpt)"
+        r"[\s\d,.:;-]*",
+        re.IGNORECASE,
+    )
+
+    @classmethod
+    def _strip_answer_preamble(cls, answer: str) -> str:
+        """Remove LLM citation preambles before scoring (e.g. 'According to Excerpt 1,')."""
+        cleaned = cls._PREAMBLE_RE.sub("", answer.strip()).strip().lstrip(",. ")
+        return cleaned if cleaned else answer
+
     def _calculate_faithfulness_heuristic(self, answer: str, contexts: list[str]) -> float:
-        """Heuristic-based faithfulness: check word overlap with context."""
+        """Heuristic faithfulness: fraction of answer key-words that appear in context.
+
+        No artificial floor — 0 overlap = 0 faithfulness (fully hallucinated answer).
+        Strips LLM citation preambles before scoring so 'According to Excerpt 1' doesn't
+        penalise an otherwise grounded answer.
+        """
         if not answer or not contexts:
-            return 0.5
+            return 0.0
 
+        clean_answer = self._strip_answer_preamble(answer).lower()
         context_text = " ".join(c.lower() for c in contexts if c)
-        answer_lower = answer.lower()
 
-        # Extract key phrases (3+ words)
         context_words = set(w for w in context_text.split() if len(w) > 3)
-        answer_words = set(w for w in answer_lower.split() if len(w) > 3)
+        answer_words  = set(w for w in clean_answer.split() if len(w) > 3)
 
         if not answer_words:
-            return 1.0
+            return 1.0  # trivially faithful empty answer
 
         overlap = len(answer_words & context_words) / len(answer_words)
-        return min(1.0, max(0.0, 0.6 + (overlap * 0.4)))
+        return min(1.0, max(0.0, overlap))
 
     def calculate_context_precision(
         self,
@@ -100,15 +125,19 @@ class MetricsCalculator:
             if not contexts:
                 return 0.0
 
-            # Count contexts that contain key answer terms
-            answer_terms = set(w.lower() for w in answer.split() if len(w) > 4)
+            # Use BOTH question and answer terms (> 3 chars) to judge context relevance.
+            # Using only answer terms penalises short answers; question terms anchor intent.
+            q_terms = set(w.lower().strip("?,.'\"") for w in question.split() if len(w) > 3)
+            a_terms = set(w.lower().strip("?,.'\"") for w in self._strip_answer_preamble(answer).split() if len(w) > 3)
+            key_terms = q_terms | a_terms
+            if not key_terms:
+                return 1.0
             relevant_count = sum(
                 1 for ctx in contexts
-                if any(term in ctx.lower() for term in answer_terms)
+                if any(term in ctx.lower() for term in key_terms)
             )
-
             precision = relevant_count / len(contexts) if contexts else 0.0
-            return min(1.0, max(0.0, 0.5 + (precision * 0.5)))
+            return min(1.0, max(0.0, precision))
         except Exception as e:
             print(f"Error calculating context precision: {e}")
             return 0.5
@@ -119,20 +148,19 @@ class MetricsCalculator:
         contexts: list[str],
         answer: str,
     ) -> float:
-        """Calculate context recall: how much relevant info from documents is in context (0-1)."""
+        """Context recall: fraction of question+answer key-words present in retrieved context."""
         try:
             if not contexts:
                 return 0.0
-
-            # Simplified: check if context adequately covers the answer domain
-            context_len = sum(len(c) for c in contexts)
-            answer_len = len(answer)
-
-            if context_len == 0:
-                return 0.0
-
-            coverage = min(1.0, context_len / (answer_len * 5))
-            return 0.6 + (coverage * 0.4)
+            # Target = terms needed to answer the question (question + answer vocabulary)
+            q_words = set(w.lower() for w in question.split() if len(w) > 3)
+            a_words = set(w.lower() for w in self._strip_answer_preamble(answer).split() if len(w) > 3)
+            target = q_words | a_words
+            if not target:
+                return 1.0
+            context_text = " ".join(c.lower() for c in contexts if c)
+            context_words = set(w for w in context_text.split() if len(w) > 3)
+            return min(1.0, max(0.0, len(target & context_words) / len(target)))
         except Exception as e:
             print(f"Error calculating context recall: {e}")
             return 0.5
@@ -141,37 +169,20 @@ class MetricsCalculator:
         self,
         answer: str,
         contexts: list[str],
+        citation_scores: list[float] | None = None,
     ) -> float:
-        """Calculate citation accuracy: do cited facts appear in context (0-1)."""
-        try:
-            # Simple heuristic: check if answer contains extracted facts from contexts
-            answer_lower = answer.lower()
-            context_text = " ".join(c.lower() for c in contexts)
+        """Citation accuracy: quality of the best-matching retrieved source.
 
-            if not answer_lower or not context_text:
-                return 0.0
-
-            words = set(w for w in answer_lower.split() if len(w) > 3)
-            context_words = set(w for w in context_text.split() if len(w) > 3)
-
-            if not words:
-                return 1.0
-
-            overlap = len(words & context_words) / len(words)
-            return min(1.0, overlap)
-        except Exception as e:
-            print(f"Error calculating citation accuracy: {e}")
-            return 0.5
-
-    def calculate_hallucination_score(
-        self,
-        answer: str,
-        contexts: list[str],
-    ) -> float:
-        """Calculate hallucination score: 1.0 = no hallucinations, 0.0 = high hallucinations."""
-        # Inverse of faithfulness check
-        faith_score = self.calculate_faithfulness(answer, contexts)
-        return faith_score
+        Uses the MAX cosine similarity score from the vector store. Rationale:
+        citation accuracy asks 'did we cite a relevant source?' — we only need
+        ONE highly relevant source. Averaging in weak secondary chunks (e.g.
+        an Excel file retrieved because it contains a product name) unfairly
+        penalises a system that correctly found the primary source at 92%.
+        Falls back to faithfulness heuristic when no scores are available.
+        """
+        if citation_scores:
+            return min(1.0, max(0.0, max(citation_scores)))
+        return self._calculate_faithfulness_heuristic(answer, contexts)
 
     def calculate_retrieval_f1(
         self,
@@ -200,86 +211,3 @@ class MetricsCalculator:
         f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
         return min(1.0, max(0.0, f1))
 
-    def calculate_response_completeness(
-        self,
-        answer: str,
-        question: str,
-    ) -> float:
-        """Calculate response completeness: does answer fully address the question (0-1)."""
-        try:
-            if not answer or not question:
-                return 0.0
-
-            answer_len = len(answer.split())
-            question_len = len(question.split())
-
-            min_expected = max(3, question_len // 2)
-            if answer_len < min_expected:
-                return 0.3
-
-            completeness = min(1.0, answer_len / (question_len * 2))
-            return completeness
-        except Exception:
-            return 0.5
-
-    def calculate_latency(
-        self,
-        embedding_time: float,
-        retrieval_time: float,
-        generation_time: float,
-    ) -> dict:
-        """Calculate latency metrics."""
-        total = embedding_time + retrieval_time + generation_time
-        return {
-            "embedding_time_ms": round(embedding_time * 1000, 2),
-            "retrieval_time_ms": round(retrieval_time * 1000, 2),
-            "generation_time_ms": round(generation_time * 1000, 2),
-            "total_time_ms": round(total * 1000, 2),
-        }
-
-
-def evaluate_qa_pair(
-    question: str,
-    answer: str,
-    contexts: list[str],
-    citation_scores: list[float] | None = None,
-    expected_answer: str = "",
-) -> dict:
-    """Evaluate a single QA pair and return all metrics.
-
-    Args:
-        question: The user question.
-        answer: The generated answer.
-        contexts: Retrieved context text chunks.
-        citation_scores: Raw cosine similarity scores from vector store (used
-            as a proxy for retrieval quality when ground-truth is unavailable).
-        expected_answer: Optional ground-truth answer for completeness scoring.
-    """
-    calculator = MetricsCalculator()
-    start_time = time.time()
-
-    # Retrieval quality: use mean citation score as proxy when no ground truth.
-    if citation_scores:
-        retrieval_f1 = float(sum(citation_scores) / len(citation_scores))
-    else:
-        retrieval_f1 = calculator.calculate_context_precision(question, contexts, answer)
-
-    metrics = {
-        "question": question,
-        "answer": answer,
-        "contexts": contexts,
-        "timestamp": time.time(),
-        "scores": {
-            "faithfulness": calculator.calculate_faithfulness(answer, contexts),
-            "answer_relevancy": calculator.calculate_answer_relevancy(question, answer),
-            "context_precision": calculator.calculate_context_precision(question, contexts, answer),
-            "context_recall": calculator.calculate_context_recall(question, contexts, answer),
-            "citation_accuracy": calculator.calculate_citation_accuracy(answer, contexts),
-            "hallucination_score": calculator.calculate_hallucination_score(answer, contexts),
-            "retrieval_f1": retrieval_f1,
-            "response_completeness": calculator.calculate_response_completeness(answer, question),
-        },
-        "duration_ms": round((time.time() - start_time) * 1000, 2),
-    }
-
-    return metrics

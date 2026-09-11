@@ -1,0 +1,613 @@
+{
+  "timestamp": "2026-09-09T12:51:51.443222",
+  "dataset_stats": {
+    "total_questions": 25,
+    "questions_with_answers": 25,
+    "questions_with_contexts": 25,
+    "dataset_path": "C:\\AIHandsonWorkspace\\AI_Agent_Practice_Code_Git\\02-RAG-chat-on-document\\evaluation\\datasets\\golden_qa_v1.0.json",
+    "last_modified": "2026-09-09T12:23:35.809055"
+  },
+  "evaluation_count": 25,
+  "error_count": 0,
+  "errors": [],
+  "results": [
+    {
+      "question": "How many days of annual leave do full-time employees receive per year?",
+      "answer": "According to Excerpt 1, full-time employees receive 24 days of annual leave per calendar year.",
+      "contexts": [
+        "1. Annual Leave\nFull-time employees receive 24 days of annual leave per calendar year. Employees may carry forward a\nmaximum of 10 unused annual-leave days into the following calendar year.",
+        "2. Sick Leave\nEmployees receive 12 days of sick leave per calendar year. Sick leave should be reported to the manager as\nsoon as reasonably possible.",
+        "5. Benefits\nEligible employees receive medical insurance, accidental coverage, and access to the company's employee\nassistance program.\nTechnical / Reference Table\nBenefit / Rule\nPolicy\nAnnual leave\n24 days\nMaximum carry-forward\n10 days\nSick leave\n12 days\nRemote work\nUp to 3 days/week\nFlight standard under 6 hours\nEconomy"
+      ],
+      "timestamp": 1788938261.8100195,
+      "scores": {
+        "faithfulness": 0.92,
+        "answer_relevancy": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "citation_accuracy": 0.8,
+        "hallucination_score": 0.92,
+        "retrieval_f1": 1.0,
+        "response_completeness": 0.625
+      },
+      "duration_ms": 0.2,
+      "qa_id": 1,
+      "expected_answer": "Full-time employees receive 24 days of annual leave per calendar year."
+    },
+    {
+      "question": "How many days of sick leave are employees entitled to each year?",
+      "answer": "According to Excerpt 1, employees receive 12 days of sick leave per calendar year.",
+      "contexts": [
+        "2. Sick Leave\nEmployees receive 12 days of sick leave per calendar year. Sick leave should be reported to the manager as\nsoon as reasonably possible.",
+        "5. Benefits\nEligible employees receive medical insurance, accidental coverage, and access to the company's employee\nassistance program.\nTechnical / Reference Table\nBenefit / Rule\nPolicy\nAnnual leave\n24 days\nMaximum carry-forward\n10 days\nSick leave\n12 days\nRemote work\nUp to 3 days/week\nFlight standard under 6 hours\nEconomy",
+        "1. Annual Leave\nFull-time employees receive 24 days of annual leave per calendar year. Employees may carry forward a\nmaximum of 10 unused annual-leave days into the following calendar year."
+      ],
+      "timestamp": 1788938283.8354154,
+      "scores": {
+        "faithfulness": 0.9111111111111111,
+        "answer_relevancy": 0.8,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "citation_accuracy": 0.7777777777777778,
+        "hallucination_score": 0.9111111111111111,
+        "retrieval_f1": 1.0,
+        "response_completeness": 0.5833333333333334
+      },
+      "duration_ms": 0.22,
+      "qa_id": 2,
+      "expected_answer": "Employees receive 12 days of sick leave per calendar year."
+    },
+    {
+      "question": "How many unused annual leave days can an employee carry forward to the next year?",
+      "answer": "10 days.",
+      "contexts": [
+        "1. Annual Leave\nFull-time employees receive 24 days of annual leave per calendar year. Employees may carry forward a\nmaximum of 10 unused annual-leave days into the following calendar year.",
+        "5. Benefits\nEligible employees receive medical insurance, accidental coverage, and access to the company's employee\nassistance program.\nTechnical / Reference Table\nBenefit / Rule\nPolicy\nAnnual leave\n24 days\nMaximum carry-forward\n10 days\nSick leave\n12 days\nRemote work\nUp to 3 days/week\nFlight standard under 6 hours\nEconomy",
+        "2. Sick Leave\nEmployees receive 12 days of sick leave per calendar year. Sick leave should be reported to the manager as\nsoon as reasonably possible."
+      ],
+      "timestamp": 1788938299.5116515,
+      "scores": {
+        "faithfulness": 0.6,
+        "answer_relevancy": 0.3,
+        "context_precision": 0.5,
+        "context_recall": 1.0,
+        "citation_accuracy": 0.0,
+        "hallucination_score": 0.6,
+        "retrieval_f1": 0.5,
+        "response_completeness": 0.3
+      },
+      "duration_ms": 0.2,
+      "qa_id": 3,
+      "expected_answer": "Employees may carry forward a maximum of 10 unused annual-leave days into the following calendar year."
+    },
+    {
+      "question": "How many days per week can employees work from home?",
+      "answer": "According to Excerpt 1, employees may work remotely up to 3 days per week, subject to team requirements and manager approval.",
+      "contexts": [
+        "3. Work From Home\nEmployees may work remotely up to 3 days per week, subject to team requirements and manager approval.\nProduction support rotations may require employees to work from the office.",
+        "1. Annual Leave\nFull-time employees receive 24 days of annual leave per calendar year. Employees may carry forward a\nmaximum of 10 unused annual-leave days into the following calendar year.",
+        "5. Benefits\nEligible employees receive medical insurance, accidental coverage, and access to the company's employee\nassistance program.\nTechnical / Reference Table\nBenefit / Rule\nPolicy\nAnnual leave\n24 days\nMaximum carry-forward\n10 days\nSick leave\n12 days\nRemote work\nUp to 3 days/week\nFlight standard under 6 hours\nEconomy"
+      ],
+      "timestamp": 1788938324.3349917,
+      "scores": {
+        "faithfulness": 0.9333333333333333,
+        "answer_relevancy": 0.7285714285714285,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "citation_accuracy": 0.8333333333333334,
+        "hallucination_score": 0.9333333333333333,
+        "retrieval_f1": 1.0,
+        "response_completeness": 1.0
+      },
+      "duration_ms": 0.24,
+      "qa_id": 4,
+      "expected_answer": "Employees may work remotely up to 3 days per week, subject to team requirements and manager approval."
+    },
+    {
+      "question": "What employee benefits does the company provide?",
+      "answer": "According to Excerpt 3, the company provides the following benefits:\n\n1. Medical insurance\n2. Accidental coverage\n3. Access to the company's employee assistance program\n\nAdditionally, Excerpt 3 also lists specific benefits with their corresponding details:\n\n1. Annual leave: 24 days\n2. Sick leave: 12 days\n3. Remote work: Up to 3 days/week",
+      "contexts": [
+        "Employee Handbook",
+        "Company Policy and Security Guide",
+        "5. Benefits\nEligible employees receive medical insurance, accidental coverage, and access to the company's employee\nassistance program.\nTechnical / Reference Table\nBenefit / Rule\nPolicy\nAnnual leave\n24 days\nMaximum carry-forward\n10 days\nSick leave\n12 days\nRemote work\nUp to 3 days/week\nFlight standard under 6 hours\nEconomy"
+      ],
+      "timestamp": 1788938362.3567114,
+      "scores": {
+        "faithfulness": 0.7677419354838709,
+        "answer_relevancy": 0.8,
+        "context_precision": 1.0,
+        "context_recall": 0.6880235988200589,
+        "citation_accuracy": 0.41935483870967744,
+        "hallucination_score": 0.7677419354838709,
+        "retrieval_f1": 1.0,
+        "response_completeness": 1.0
+      },
+      "duration_ms": 0.47,
+      "qa_id": 5,
+      "expected_answer": "Eligible employees receive medical insurance, accidental coverage, and access to the company's employee assistance program."
+    },
+    {
+      "question": "What travel class is the standard for flights under 6 hours?",
+      "answer": "Economy class is the standard for flights under 6 hours.",
+      "contexts": [
+        "4. Travel Policy\nDomestic business travel requires manager approval. International business travel requires manager and\nbusiness-unit approval. Economy class is the standard for flights under 6 hours.",
+        "Benefit / Rule | Policy\n--- | ---\nAnnual leave | 24 days\nMaximum carry-forward | 10 days\nSick leave | 12 days\nRemote work | Up to 3 days/week\nFlight standard under 6 hours | Economy",
+        "5. Benefits\nEligible employees receive medical insurance, accidental coverage, and access to the company's employee\nassistance program.\nTechnical / Reference Table\nBenefit / Rule\nPolicy\nAnnual leave\n24 days\nMaximum carry-forward\n10 days\nSick leave\n12 days\nRemote work\nUp to 3 days/week\nFlight standard under 6 hours\nEconomy"
+      ],
+      "timestamp": 1788938383.5898032,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8714285714285714,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "citation_accuracy": 1.0,
+        "hallucination_score": 1.0,
+        "retrieval_f1": 1.0,
+        "response_completeness": 0.45454545454545453
+      },
+      "duration_ms": 0.32,
+      "qa_id": 6,
+      "expected_answer": "Economy class is the standard for flights under 6 hours."
+    },
+    {
+      "question": "What approval is required for international business travel?",
+      "answer": "Manager and business-unit approval.",
+      "contexts": [
+        "4. Travel Policy\nDomestic business travel requires manager approval. International business travel requires manager and\nbusiness-unit approval. Economy class is the standard for flights under 6 hours.",
+        "3. Expense Approval\nExpenses up to INR 10,000 may be approved by the employee's manager. Expenses above INR 10,000 require\nmanager and department-head approval."
+      ],
+      "timestamp": 1788938391.1912131,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.3,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "citation_accuracy": 1.0,
+        "hallucination_score": 1.0,
+        "retrieval_f1": 1.0,
+        "response_completeness": 0.25
+      },
+      "duration_ms": 0.16,
+      "qa_id": 7,
+      "expected_answer": "International business travel requires manager and business-unit approval."
+    },
+    {
+      "question": "What is the minimum password length required by company policy?",
+      "answer": "According to Excerpt 1, the minimum password length required by company policy is 12 characters.",
+      "contexts": [
+        "1. Password Policy\nPasswords must contain at least 12 characters and should include a mixture of uppercase letters, lowercase\nletters, numbers, and symbols. Passwords must not be shared with another person.",
+        "Company Policy and Security Guide",
+        "2. Account Lockout\nAn account is locked after 5 consecutive failed authentication attempts. The employee must follow the approved\naccount-recovery process to regain access."
+      ],
+      "timestamp": 1788938409.726041,
+      "scores": {
+        "faithfulness": 0.7333333333333333,
+        "answer_relevancy": 1.0,
+        "context_precision": 0.8333333333333333,
+        "context_recall": 0.9425,
+        "citation_accuracy": 0.3333333333333333,
+        "hallucination_score": 0.7333333333333333,
+        "retrieval_f1": 0.8333333333333333,
+        "response_completeness": 0.75
+      },
+      "duration_ms": 0.31,
+      "qa_id": 8,
+      "expected_answer": "Passwords must contain at least 12 characters and should include a mixture of uppercase letters, lowercase letters, numbers, and symbols."
+    },
+    {
+      "question": "After how many failed login attempts is an account locked?",
+      "answer": "5 consecutive failed authentication attempts.",
+      "contexts": [
+        "2. Account Lockout\nAn account is locked after 5 consecutive failed authentication attempts. The employee must follow the approved\naccount-recovery process to regain access."
+      ],
+      "timestamp": 1788938417.0895991,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.44285714285714284,
+        "context_precision": 1.0,
+        "context_recall": 0.9057777777777778,
+        "citation_accuracy": 1.0,
+        "hallucination_score": 1.0,
+        "retrieval_f1": 1.0,
+        "response_completeness": 0.25
+      },
+      "duration_ms": 0.12,
+      "qa_id": 9,
+      "expected_answer": "An account is locked after 5 consecutive failed authentication attempts."
+    },
+    {
+      "question": "What is the maximum expense amount a manager alone can approve?",
+      "answer": "INR 10,000.",
+      "contexts": [
+        "3. Expense Approval\nExpenses up to INR 10,000 may be approved by the employee's manager. Expenses above INR 10,000 require\nmanager and department-head approval."
+      ],
+      "timestamp": 1788938425.126016,
+      "scores": {
+        "faithfulness": 0.6,
+        "answer_relevancy": 0.3,
+        "context_precision": 0.5,
+        "context_recall": 1.0,
+        "citation_accuracy": 0.0,
+        "hallucination_score": 0.6,
+        "retrieval_f1": 0.5,
+        "response_completeness": 0.3
+      },
+      "duration_ms": 0.12,
+      "qa_id": 10,
+      "expected_answer": "Expenses up to INR 10,000 may be approved by the employee's manager."
+    },
+    {
+      "question": "Who must approve expenses above INR 10,000?",
+      "answer": "The manager and department-head must approve expenses above INR 10,000.",
+      "contexts": [
+        "3. Expense Approval\nExpenses up to INR 10,000 may be approved by the employee's manager. Expenses above INR 10,000 require\nmanager and department-head approval."
+      ],
+      "timestamp": 1788938433.3895981,
+      "scores": {
+        "faithfulness": 0.8285714285714285,
+        "answer_relevancy": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 0.780281690140845,
+        "citation_accuracy": 0.5714285714285714,
+        "hallucination_score": 0.8285714285714285,
+        "retrieval_f1": 1.0,
+        "response_completeness": 0.7142857142857143
+      },
+      "duration_ms": 0.14,
+      "qa_id": 11,
+      "expected_answer": "Expenses above INR 10,000 require manager and department-head approval."
+    },
+    {
+      "question": "Who should security incidents be reported to?",
+      "answer": "According to Excerpt 1, security incidents should be reported to the \"security operations team\".",
+      "contexts": [
+        "5. Incident Reporting\nSecurity incidents should be reported to the security operations team as soon as they are identified. The report\nshould include the time, affected system, and a short description.",
+        "Company Policy and Security Guide"
+      ],
+      "timestamp": 1788938447.7048595,
+      "scores": {
+        "faithfulness": 0.8222222222222222,
+        "answer_relevancy": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 0.7949999999999999,
+        "citation_accuracy": 0.5555555555555556,
+        "hallucination_score": 0.8222222222222222,
+        "retrieval_f1": 1.0,
+        "response_completeness": 1.0
+      },
+      "duration_ms": 0.17,
+      "qa_id": 12,
+      "expected_answer": "Security incidents should be reported to the security operations team as soon as they are identified."
+    },
+    {
+      "question": "What is the operating temperature range of the Smart Thermostat X100?",
+      "answer": "The operating temperature range of the Smart Thermostat X100 is \u221210\u00b0C to 55\u00b0C.",
+      "contexts": [
+        "Smart Thermostat X100 \u2014 Product Specification",
+        "1. Product Overview\nThe Smart Thermostat X100 is an indoor temperature controller designed for residential use. It supports Wi-Fi\nconnectivity, programmable schedules, and remote monitoring.",
+        "2. Installation\nInstall the thermostat on an interior wall away from direct sunlight and drafts. For reliable connectivity, keep the\ndevice within a strong Wi-Fi coverage area.\nTechnical / Reference Table\nSpecification\nValue\nOperating temperature range\n\u221210\u00b0C to 55\u00b0C\nStorage temperature range\n\u221220\u00b0C to 70\u00b0C\nPower supply\n24 VAC\nConnectivity\nWi-Fi 2.4 GHz\nDisplay\n4.3 inch LCD\nWarranty\n2 years\nPerformance Chart\nThe numerical values for this chart are intentionally available only in the image."
+      ],
+      "timestamp": 1788938475.2073162,
+      "scores": {
+        "faithfulness": 0.95,
+        "answer_relevancy": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "citation_accuracy": 0.875,
+        "hallucination_score": 0.95,
+        "retrieval_f1": 1.0,
+        "response_completeness": 0.5909090909090909
+      },
+      "duration_ms": 0.39,
+      "qa_id": 13,
+      "expected_answer": "The operating temperature range of the Smart Thermostat X100 is -10\u00c2\u00b0C to 55\u00c2\u00b0C."
+    },
+    {
+      "question": "What is the warranty period for the Smart Thermostat X100?",
+      "answer": "2 years.",
+      "contexts": [
+        "Smart Thermostat X100 \u2014 Product Specification",
+        "1. Product Overview\nThe Smart Thermostat X100 is an indoor temperature controller designed for residential use. It supports Wi-Fi\nconnectivity, programmable schedules, and remote monitoring.",
+        "2. Installation\nInstall the thermostat on an interior wall away from direct sunlight and drafts. For reliable connectivity, keep the\ndevice within a strong Wi-Fi coverage area.\nTechnical / Reference Table\nSpecification\nValue\nOperating temperature range\n\u221210\u00b0C to 55\u00b0C\nStorage temperature range\n\u221220\u00b0C to 70\u00b0C\nPower supply\n24 VAC\nConnectivity\nWi-Fi 2.4 GHz\nDisplay\n4.3 inch LCD\nWarranty\n2 years\nPerformance Chart\nThe numerical values for this chart are intentionally available only in the image."
+      ],
+      "timestamp": 1788938478.5463076,
+      "scores": {
+        "faithfulness": 0.6,
+        "answer_relevancy": 0.3,
+        "context_precision": 0.5,
+        "context_recall": 1.0,
+        "citation_accuracy": 0.0,
+        "hallucination_score": 0.6,
+        "retrieval_f1": 0.5,
+        "response_completeness": 0.3
+      },
+      "duration_ms": 0.3,
+      "qa_id": 14,
+      "expected_answer": "The Smart Thermostat X100 has a 2-year warranty."
+    },
+    {
+      "question": "What type of connectivity does the Smart Thermostat X100 support?",
+      "answer": "Wi-Fi connectivity.",
+      "contexts": [
+        "Smart Thermostat X100 \u2014 Product Specification",
+        "1. Product Overview\nThe Smart Thermostat X100 is an indoor temperature controller designed for residential use. It supports Wi-Fi\nconnectivity, programmable schedules, and remote monitoring.",
+        "2. Installation\nInstall the thermostat on an interior wall away from direct sunlight and drafts. For reliable connectivity, keep the\ndevice within a strong Wi-Fi coverage area.\nTechnical / Reference Table\nSpecification\nValue\nOperating temperature range\n\u221210\u00b0C to 55\u00b0C\nStorage temperature range\n\u221220\u00b0C to 70\u00b0C\nPower supply\n24 VAC\nConnectivity\nWi-Fi 2.4 GHz\nDisplay\n4.3 inch LCD\nWarranty\n2 years\nPerformance Chart\nThe numerical values for this chart are intentionally available only in the image."
+      ],
+      "timestamp": 1788938482.3419154,
+      "scores": {
+        "faithfulness": 0.8,
+        "answer_relevancy": 0.3,
+        "context_precision": 0.8333333333333333,
+        "context_recall": 1.0,
+        "citation_accuracy": 0.5,
+        "hallucination_score": 0.8,
+        "retrieval_f1": 0.8333333333333333,
+        "response_completeness": 0.3
+      },
+      "duration_ms": 0.29,
+      "qa_id": 15,
+      "expected_answer": "The Smart Thermostat X100 supports Wi-Fi 2.4 GHz connectivity."
+    },
+    {
+      "question": "What is the power supply requirement of the Smart Thermostat X100?",
+      "answer": "The power supply requirement of the Smart Thermostat X100 is 24 VAC.",
+      "contexts": [
+        "Smart Thermostat X100 \u2014 Product Specification",
+        "1. Product Overview\nThe Smart Thermostat X100 is an indoor temperature controller designed for residential use. It supports Wi-Fi\nconnectivity, programmable schedules, and remote monitoring.",
+        "2. Installation\nInstall the thermostat on an interior wall away from direct sunlight and drafts. For reliable connectivity, keep the\ndevice within a strong Wi-Fi coverage area.\nTechnical / Reference Table\nSpecification\nValue\nOperating temperature range\n\u221210\u00b0C to 55\u00b0C\nStorage temperature range\n\u221220\u00b0C to 70\u00b0C\nPower supply\n24 VAC\nConnectivity\nWi-Fi 2.4 GHz\nDisplay\n4.3 inch LCD\nWarranty\n2 years\nPerformance Chart\nThe numerical values for this chart are intentionally available only in the image."
+      ],
+      "timestamp": 1788938490.0504246,
+      "scores": {
+        "faithfulness": 0.8857142857142857,
+        "answer_relevancy": 1.0,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "citation_accuracy": 0.7142857142857143,
+        "hallucination_score": 0.8857142857142857,
+        "retrieval_f1": 1.0,
+        "response_completeness": 0.5454545454545454
+      },
+      "duration_ms": 0.4,
+      "qa_id": 16,
+      "expected_answer": "The Smart Thermostat X100 requires a 24 VAC power supply."
+    },
+    {
+      "question": "Which region has the highest revenue in sales data?",
+      "answer": "I could not find this in the provided documents.",
+      "contexts": [],
+      "timestamp": 1788938490.157866,
+      "scores": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.3,
+        "context_precision": 0.0,
+        "context_recall": 0.0,
+        "citation_accuracy": 0.0,
+        "hallucination_score": 0.5,
+        "retrieval_f1": 0.0,
+        "response_completeness": 0.5
+      },
+      "duration_ms": 0.17,
+      "qa_id": 17,
+      "expected_answer": "The West region has the highest revenue of 840,000."
+    },
+    {
+      "question": "Which region has the lowest revenue?",
+      "answer": "I could not find this in the provided documents.",
+      "contexts": [],
+      "timestamp": 1788938490.2972622,
+      "scores": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.3,
+        "context_precision": 0.0,
+        "context_recall": 0.0,
+        "citation_accuracy": 0.0,
+        "hallucination_score": 0.5,
+        "retrieval_f1": 0.0,
+        "response_completeness": 0.75
+      },
+      "duration_ms": 0.06,
+      "qa_id": 18,
+      "expected_answer": "The North region has the lowest revenue of 620,000."
+    },
+    {
+      "question": "Which product had the highest units sold in Q3?",
+      "answer": "I could not find this in the provided documents.",
+      "contexts": [],
+      "timestamp": 1788938490.490332,
+      "scores": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.3,
+        "context_precision": 0.0,
+        "context_recall": 0.0,
+        "citation_accuracy": 0.0,
+        "hallucination_score": 0.5,
+        "retrieval_f1": 0.0,
+        "response_completeness": 0.5
+      },
+      "duration_ms": 0.07,
+      "qa_id": 19,
+      "expected_answer": "Thermostat X100 had the highest units sold in Q3 with 1,200 units in the West region."
+    },
+    {
+      "question": "What product categories are available in the product sales data?",
+      "answer": "I could not find this in the provided documents.",
+      "contexts": [],
+      "timestamp": 1788938490.6167352,
+      "scores": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.3,
+        "context_precision": 0.0,
+        "context_recall": 0.0,
+        "citation_accuracy": 0.0,
+        "hallucination_score": 0.5,
+        "retrieval_f1": 0.0,
+        "response_completeness": 0.45
+      },
+      "duration_ms": 0.07,
+      "qa_id": 20,
+      "expected_answer": "Two product categories are available: Smart Home (Thermostat X100, Thermostat Mini) and Accessory (Sensor S2, Gateway G1)."
+    },
+    {
+      "question": "Which customer is currently inactive?",
+      "answer": "I could not find this in the provided documents.",
+      "contexts": [],
+      "timestamp": 1788938490.7465787,
+      "scores": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.3,
+        "context_precision": 0.0,
+        "context_recall": 0.0,
+        "citation_accuracy": 0.0,
+        "hallucination_score": 0.5,
+        "retrieval_f1": 0.0,
+        "response_completeness": 0.9
+      },
+      "duration_ms": 0.06,
+      "qa_id": 21,
+      "expected_answer": "Sunrise Retail (Customer ID C004) from the South region, SMB segment, is currently inactive."
+    },
+    {
+      "question": "How many units of Thermostat X100 did Apex Retail order?",
+      "answer": "I could not find this in the provided documents.",
+      "contexts": [
+        "Smart Thermostat X100 \u2014 Product Specification",
+        "1. Product Overview\nThe Smart Thermostat X100 is an indoor temperature controller designed for residential use. It supports Wi-Fi\nconnectivity, programmable schedules, and remote monitoring.",
+        "2. Installation\nInstall the thermostat on an interior wall away from direct sunlight and drafts. For reliable connectivity, keep the\ndevice within a strong Wi-Fi coverage area.\nTechnical / Reference Table\nSpecification\nValue\nOperating temperature range\n\u221210\u00b0C to 55\u00b0C\nStorage temperature range\n\u221220\u00b0C to 70\u00b0C\nPower supply\n24 VAC\nConnectivity\nWi-Fi 2.4 GHz\nDisplay\n4.3 inch LCD\nWarranty\n2 years\nPerformance Chart\nThe numerical values for this chart are intentionally available only in the image."
+      ],
+      "timestamp": 1788938496.124832,
+      "scores": {
+        "faithfulness": 0.6799999999999999,
+        "answer_relevancy": 0.3,
+        "context_precision": 0.5,
+        "context_recall": 1.0,
+        "citation_accuracy": 0.2,
+        "hallucination_score": 0.6799999999999999,
+        "retrieval_f1": 0.5,
+        "response_completeness": 0.45
+      },
+      "duration_ms": 0.49,
+      "qa_id": 22,
+      "expected_answer": "Apex Retail (C001) ordered 300 units of Thermostat X100 in Q3."
+    },
+    {
+      "question": "Which customers are in the Enterprise segment?",
+      "answer": "I could not find this in the provided documents.",
+      "contexts": [],
+      "timestamp": 1788938496.2265065,
+      "scores": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.3,
+        "context_precision": 0.0,
+        "context_recall": 0.0,
+        "citation_accuracy": 0.0,
+        "hallucination_score": 0.5,
+        "retrieval_f1": 0.0,
+        "response_completeness": 0.6428571428571429
+      },
+      "duration_ms": 0.05,
+      "qa_id": 23,
+      "expected_answer": "Apex Retail (West) and NorthStar Stores (North) are in the Enterprise segment."
+    },
+    {
+      "question": "What is the Smart Thermostat X100 designed for?",
+      "answer": "The Smart Thermostat X100 is designed for residential use.",
+      "contexts": [
+        "Smart Thermostat X100 \u2014 Product Specification",
+        "1. Product Overview\nThe Smart Thermostat X100 is an indoor temperature controller designed for residential use. It supports Wi-Fi\nconnectivity, programmable schedules, and remote monitoring.",
+        "2. Installation\nInstall the thermostat on an interior wall away from direct sunlight and drafts. For reliable connectivity, keep the\ndevice within a strong Wi-Fi coverage area.\nTechnical / Reference Table\nSpecification\nValue\nOperating temperature range\n\u221210\u00b0C to 55\u00b0C\nStorage temperature range\n\u221220\u00b0C to 70\u00b0C\nPower supply\n24 VAC\nConnectivity\nWi-Fi 2.4 GHz\nDisplay\n4.3 inch LCD\nWarranty\n2 years\nPerformance Chart\nThe numerical values for this chart are intentionally available only in the image."
+      ],
+      "timestamp": 1788938501.8294134,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9666666666666666,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "citation_accuracy": 1.0,
+        "hallucination_score": 1.0,
+        "retrieval_f1": 1.0,
+        "response_completeness": 0.5625
+      },
+      "duration_ms": 0.37,
+      "qa_id": 24,
+      "expected_answer": "The Smart Thermostat X100 is an indoor temperature controller designed for residential use. It supports Wi-Fi connectivity, programmable schedules, and remote monitoring."
+    },
+    {
+      "question": "What is the display size of the Smart Thermostat X100?",
+      "answer": "The display size of the Smart Thermostat X100 is 4.3 inches, as stated in Excerpt 3.",
+      "contexts": [
+        "Smart Thermostat X100 \u2014 Product Specification",
+        "1. Product Overview\nThe Smart Thermostat X100 is an indoor temperature controller designed for residential use. It supports Wi-Fi\nconnectivity, programmable schedules, and remote monitoring.",
+        "2. Installation\nInstall the thermostat on an interior wall away from direct sunlight and drafts. For reliable connectivity, keep the\ndevice within a strong Wi-Fi coverage area.\nTechnical / Reference Table\nSpecification\nValue\nOperating temperature range\n\u221210\u00b0C to 55\u00b0C\nStorage temperature range\n\u221220\u00b0C to 70\u00b0C\nPower supply\n24 VAC\nConnectivity\nWi-Fi 2.4 GHz\nDisplay\n4.3 inch LCD\nWarranty\n2 years\nPerformance Chart\nThe numerical values for this chart are intentionally available only in the image."
+      ],
+      "timestamp": 1788938511.44277,
+      "scores": {
+        "faithfulness": 0.8,
+        "answer_relevancy": 0.9666666666666666,
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "citation_accuracy": 0.5,
+        "hallucination_score": 0.8,
+        "retrieval_f1": 1.0,
+        "response_completeness": 0.8
+      },
+      "duration_ms": 0.4,
+      "qa_id": 25,
+      "expected_answer": "The Smart Thermostat X100 has a 4.3 inch LCD display."
+    }
+  ],
+  "quality_gate": {
+    "status": "[FAIL]",
+    "passed": false,
+    "summary": "Quality gate FAILED. Improve faithfulness, answer_relevancy, context_precision, context_recall, answer_semantic_similarity, citation_accuracy, grounded_refusal, retrieval_f1 (gap: 50.00%)",
+    "metrics": [
+      {
+        "name": "faithfulness",
+        "score": 0.7533,
+        "threshold": 0.85,
+        "passed": false
+      },
+      {
+        "name": "answer_relevancy",
+        "score": 0.607,
+        "threshold": 0.8,
+        "passed": false
+      },
+      {
+        "name": "context_precision",
+        "score": 0.6667,
+        "threshold": 0.75,
+        "passed": false
+      },
+      {
+        "name": "context_recall",
+        "score": 0.7245,
+        "threshold": 0.75,
+        "passed": false
+      },
+      {
+        "name": "answer_semantic_similarity",
+        "score": 0.5,
+        "threshold": 0.75,
+        "passed": false
+      },
+      {
+        "name": "citation_accuracy",
+        "score": 0.4432,
+        "threshold": 0.9,
+        "passed": false
+      },
+      {
+        "name": "grounded_refusal",
+        "score": 0.5,
+        "threshold": 1.0,
+        "passed": false
+      },
+      {
+        "name": "retrieval_f1",
+        "score": 0.6667,
+        "threshold": 0.7,
+        "passed": false
+      }
+    ]
+  }
+}

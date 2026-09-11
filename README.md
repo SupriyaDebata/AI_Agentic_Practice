@@ -1,422 +1,409 @@
-# ChatOnDocument with RAG Quality Gate
+# RAG Chat — Document Q&A with Quality Gate Evaluation
 
-Upload PDF or Excel files, ask questions in plain English, get grounded answers with source citations and built-in quality monitoring.
-
-**Status:** ✅ Production-Ready | **Demo Ready:** Yes
+Upload PDF/Excel files, ask questions, and evaluate your RAG pipeline against a golden dataset with binary 1.0 / 0.0 scoring and a leadership-ready scorecard.
 
 ---
 
-## 📋 What This Project Does
+## What This Project Does
 
-1. **Document Upload** - Ingest PDF or Excel files with automatic text extraction
-2. **Semantic Retrieval** - Find relevant document sections using embeddings + dual-search
-3. **Grounded Answering** - Stream answers from retrieved context only (no hallucinations)
-4. **Source Citations** - Link every answer back to source with page numbers
-5. **Quality Evaluation** - Measure RAG quality against 8+ metrics in real-time
-6. **Production Dashboards** - View metrics, datasets, and evaluation history
+| Layer | What Happens |
+|-------|-------------|
+| **Upload** | PDF/Excel → parsed → chunked → embedded → stored in ChromaDB |
+| **Chat** | Question → dual-pass semantic search → Ollama LLM → grounded answer |
+| **Quality Gate** | 6 RAGAS-style metrics per answer — binary **1.0 PASS** or **0.0 FAIL** |
+| **Evaluation** | Run all 28 golden Q&A pairs live — scorecard + failure root-cause analysis |
 
 ---
 
-## 🚀 End-to-End Setup & Running (5 Minutes)
+## Quick Start
 
 ### Prerequisites
 
-- Python 3.11+ 
-- Ollama installed (for local LLM + embeddings)
-- 8GB RAM minimum
+- Python 3.11+
+- [Ollama](https://ollama.com) installed and `llama3.1` model pulled
+- 8 GB RAM minimum
 
-### Step 1: Install Dependencies
+### 1. Install
 
 ```bash
-# Clone or navigate to project directory
-cd AI_Agent_Practice_Code_Git/02-RAG-chat-on-document
-
-# Create virtual environment (optional but recommended)
+cd 02-RAG-chat-on-document
 python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+# Windows:
+.venv\Scripts\activate
+# Mac/Linux:
+source .venv/bin/activate
 
-# Install all dependencies
 pip install -r requirements.txt
 ```
 
-### Step 2: Start Ollama (Required)
-
-Open a **new terminal** and run:
+### 2. Start Ollama (separate terminal, keep running)
 
 ```bash
 ollama serve
+# Shows: Listening on 127.0.0.1:11434
 ```
 
-This starts the local LLM and embedding service. You should see:
-```
-Listening on 127.0.0.1:11434
-```
-
-**Note:** Keep this running in the background.
-
-### Step 3: Initialize Quality Gate (First Time Only)
-
-```bash
-# Create evaluation directories and sample dataset
-python setup_quality_gate.py
-```
-
-You should see:
-```
-✅ Created evaluation reports directory
-✅ Created dataset directory
-✅ Sample dataset imported successfully!
-```
-
-### Step 4: Launch the App
-
-In your original terminal:
+### 3. Launch the App
 
 ```bash
 streamlit run app.py
 ```
 
-The browser opens to `http://localhost:8501`
+Opens at **http://localhost:8501**
 
 ---
 
-## 🎯 Using the App
+## Demo Flow 1 — Chat with Documents
 
-### Tab 1: 💬 Chat
+### Step 1: Upload Documents
 
-1. **Upload Documents**
-   - Click "Upload a PDF or Excel file"
-   - Select 1+ files
-   - Click "Upload & Process"
-   - Wait for success messages
+In the left sidebar → **📁 Document Management**:
 
-2. **Ask Questions**
-   - Type your question in the text box
-   - Click "Ask" button
-   - Stream answer with citations
+1. Click **"Select PDF or Excel files"**
+2. Pick one or more files from `data/pdf/` or `data/excel/`
+3. Click **📤 Upload & Process**
+4. Wait for the green `✅ filename: N chunks` confirmation
 
-3. **View Sources**
-   - Expand "Sources (N)" below answer
-   - See page numbers, relevance scores
-   - Verify grounding in documents
+**Available sample documents:**
 
-### Tab 2: 🎯 Quality Gate
+| File | Contents |
+|------|---------|
+| `Employee_Handbook.pdf` | Annual leave, sick leave, benefits |
+| `Company_Policy.pdf` | Security, expenses, travel policy |
+| `Product_Specification.pdf` | Smart thermostat specs, warranty |
+| `Sales_Data.xlsx` | Regional sales figures |
+| `Customer_Data.xlsx` | Customer records |
 
-#### **Metrics Tab**
-- View latest evaluation results
-- See individual metric scores vs thresholds
-- Check results by question
-- Download reports (HTML, JSON, CSV)
+### Step 2: Ask a Question
 
-#### **Dataset Tab**
-- Import sample QA dataset
-- View current questions
-- Validate dataset completeness
+In the main panel → **💬 Ask Your Question**:
 
-#### **Evaluation Tab**
-- Run evaluation on full dataset or single question
-- Monitor progress
+```
+How many days of annual leave do full-time employees receive?
+What is the warranty period for the thermostat?
+Which region has the highest sales?
+What is the CEO's salary?          ← should refuse (not in docs)
+```
 
-#### **History Tab**
-- View past evaluation reports
-- Compare results over time
+Click **🔍 Get Answer**.
 
-#### **Settings Tab**
-- View current metric thresholds
-- Understand metric definitions
-- Configure via `src/config.py`
+### Step 3: Read the Results
+
+**Answer panel:**
+- ✅ The answer text (grounded in documents)
+
+**Quality Metrics panel — raw score with PASS / FAIL verdict:**
+
+| Metric | Score shown | Delta shows |
+|--------|------------|-------------|
+| Faithfulness | `0.91` | `PASS (≥0.85)` ← green |
+| Answer Relevancy | `0.84` | `PASS (≥0.80)` ← green |
+| Context Precision | `0.75` | `PASS (≥0.75)` ← green |
+| Context Recall | `0.60` | `FAIL — threshold 0.75` ← red |
+| Citation Accuracy | `0.93` | `PASS (≥0.90)` ← green |
+| Retrieval F1 | `0.65` | `FAIL — threshold 0.70` ← red |
+
+The **verdict** (PASS / FAIL) is binary — a score either clears the threshold or it does not.
+The **value** shown is always the raw metric (0.00 – 1.00) so you can see how close or far it is.
+
+**Grounded Refusal (unanswerable questions):**  
+When the bot answers "I could not find this in the provided documents", all 6 metrics score **1.0** automatically — refusing an unanswerable question is the correct, trustworthy behavior.
+
+**Sources panel:**
+Each source shows the actual file name, page/sheet, and retrieval relevance score:
+```
+Source 1: Employee_Handbook.pdf  •  Page/Sheet: 2  •  Relevance: 0.91
+```
+For refusal answers: "No sources cited — bot refused..."
+
+### Step 4: Chat History
+
+Scroll down to **📜 Chat History**:
+
+- **Metrics Summary tab** — binary pass rate table across all questions asked this session
+- **Q&A Details tab** — each question with per-metric binary scores (`1.0 ✅ (raw 0.91)` or `0.0 ❌ (raw 0.60)`)
 
 ---
 
-## 📊 Quality Metrics Explained
+## Demo Flow 2 — Live Dataset Evaluation
 
-| Metric | Threshold | Meaning |
+### What the Evaluation Does
+
+Runs all **28 golden Q&A pairs** through your RAG pipeline one by one and builds a leadership-ready scorecard.
+
+### Step 1: Upload Documents First (Flow 1, Step 1)
+
+Evaluation requires documents to be indexed. Upload all 5 sample files.
+
+### Step 2: Run Evaluation
+
+Scroll to **🎯 Run Dataset Evaluation** → click **▶️ Run All Dataset**.
+
+You will see:
+1. **Progress bar** — question-by-question progress
+2. **Status line** — current question being evaluated
+3. **6 live metric tiles** — binary pass rate (%) updating after each question
+4. **Live scorecard table** — row added for every question as it completes
+
+### Step 3: Read the Scorecard
+
+Each row in the table — raw scores exactly as the deliverable format:
+
+```
+Q: warranty period   faithfulness 0.95  relevance 0.92  ctx_recall 1.0    PASS
+Q: CEO's salary      (unanswerable)     bot refused → correct              PASS
+Q: Q3 West sales     faithfulness 0.60  relevance 0.72  ctx_recall 0.55   FAIL  → retrieval-miss (Excel chunk)
+```
+
+| Column | Answered Question | Unanswerable Question |
+|--------|-------------------|----------------------|
+| Faithfulness | `0.91` | `—` |
+| Relevance | `0.84` | `—` |
+| Ctx Recall | `0.55` | `—` |
+| Ctx Precision | `0.60` | `—` |
+| Citation Acc | `0.62` | `—` |
+| Retrieval F1 | `0.57` | `—` |
+| Result | `FAIL` | `PASS` |
+| Note / Reason | `Retrieval-miss — wrong chunks retrieved (Excel chunk)` | `bot refused → correct` |
+
+### Step 4: Leadership Scorecard (appears after run completes)
+
+**5 KPI tiles:**
+- Total Questions, Overall Pass Rate, Answerable PASS, Refusal Accuracy, Unanswerable Tests
+
+**Binary pass rate per metric:**
+
+| Metric | Threshold | Pass Rate | Status |
+|--------|-----------|-----------|--------|
+| Faithfulness | 0.85 | 88% | ✅ Good |
+| Answer Relevancy | 0.80 | 76% | ⚠️ Review |
+| … | … | … | … |
+
+**Pass rate by difficulty:** Easy / Medium / Hard
+
+**Pass rate by question type:** Direct / Structured Data / Semantic Search / No Answer
+
+**Failure Classification:**
+
+| Category | # Failures | % of Failures | Recommended Fix |
+|----------|-----------|--------------|----------------|
+| Retrieval | 4 | 57% | Lower SIMILARITY_THRESHOLD or increase TOP_K |
+| Generation | 2 | 29% | Strengthen system prompt grounding rules |
+| Chunking | 1 | 14% | Raise SIMILARITY_THRESHOLD to filter weak matches |
+
+**Top-5 Failures** — expandable cards each showing:
+- Root cause (e.g., "Retrieval-miss — wrong chunks retrieved (Excel chunk)")
+- Recommended fix (e.g., "Lower SIMILARITY_THRESHOLD or increase TOP_K in config.py")
+- Which metrics failed and their raw scores
+- Bot answer preview
+
+---
+
+## The 6 Quality Metrics Explained
+
+### Retrieval Metrics (did we find the right chunks?)
+
+| Metric | Threshold | Measures |
 |--------|-----------|---------|
-| **Faithfulness** | ≥ 0.85 | Answer grounded in context, no hallucinations |
-| **Answer Relevancy** | ≥ 0.80 | Answer directly addresses question |
-| **Context Precision** | ≥ 0.75 | Retrieved chunks are relevant |
-| **Context Recall** | ≥ 0.75 | No important info was missed |
-| **Citation Accuracy** | ≥ 0.90 | Cited facts appear in sources |
-| **Hallucination Score** | ≥ 0.85 | Inverse of faithfulness |
-| **Retrieval F1** | ≥ 0.70 | Balance of precision + recall |
+| **Context Precision** | ≥ 0.75 | Fraction of retrieved chunks that are relevant to the question |
+| **Context Recall** | ≥ 0.75 | Fraction of required knowledge covered by retrieved chunks |
+| **Retrieval F1** | ≥ 0.70 | Harmonic mean of context precision and recall |
 
-**Quality Gate Status:**
-- ✅ **PASS** - All metrics meet thresholds
-- ❌ **FAIL** - One or more metrics below threshold
+### Generation Metrics (did the LLM answer well?)
+
+| Metric | Threshold | Measures |
+|--------|-----------|---------|
+| **Faithfulness** | ≥ 0.85 | Fraction of answer words that appear in retrieved context (no hallucination) |
+| **Answer Relevancy** | ≥ 0.80 | Fraction of question content words addressed in the answer |
+| **Citation Accuracy** | ≥ 0.90 | Highest cosine similarity score from the vector store (best source quality) |
+
+### Scoring Rule
+
+```
+Metric value shown  =  raw score (0.00 – 1.00)
+Verdict             =  PASS  if score ≥ threshold
+                       FAIL  if score < threshold
+Correct refusal     =  PASS  (all metrics, auto-rewarded)
+```
+
+The raw score tells you *how* the answer performed. The verdict tells you whether it cleared the bar.
+
+### Failure Classification
+
+| Category | Triggered By | Fix |
+|----------|-------------|-----|
+| **Retrieval** | context_recall FAIL, retrieval_f1 FAIL | Lower `SIMILARITY_THRESHOLD`, raise `TOP_K` |
+| **Generation** | faithfulness FAIL, answer_relevancy FAIL | Tune system prompt, check chunk content |
+| **Chunking** | context_precision FAIL (noisy chunks) | Raise `SIMILARITY_THRESHOLD`, adjust `CHUNK_SIZE` |
 
 ---
 
-## ⚙️ Configuration
+## Architecture
 
-### Key Settings (`src/config.py`)
+```
+┌─────────────────────────────────────────────────────┐
+│  Streamlit UI  (app.py)                              │
+│  • Chat panel   • Quality metrics   • Eval runner   │
+└────────────────────────┬────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────┐
+│  RAG Pipeline                                        │
+│  ┌──────────────┐  ┌───────────────┐  ┌──────────┐ │
+│  │ Doc Processor│  │  Chunker      │  │Embeddings│ │
+│  │ PDF / Excel  │→ │ 600 chars     │→ │MiniLM-L6 │ │
+│  └──────────────┘  │ 120 overlap   │  └────┬─────┘ │
+│                    └───────────────┘       │        │
+│                                    ┌───────▼──────┐ │
+│                                    │  ChromaDB    │ │
+│                                    │  Vector Store│ │
+│                                    └───────┬──────┘ │
+│  ┌──────────────────────────────┐          │        │
+│  │  Dual-Pass Retriever         │◄─────────┘        │
+│  │  full question + noun-phrase │  TOP_K=5          │
+│  └──────────────┬───────────────┘                   │
+│                 │                                    │
+│  ┌──────────────▼───────────────┐                   │
+│  │  Ollama LLM  (llama3.1)      │                   │
+│  │  Streaming   MAX_TOKENS=1500 │                   │
+│  └──────────────┬───────────────┘                   │
+└─────────────────┼───────────────────────────────────┘
+                  │
+┌─────────────────▼───────────────────────────────────┐
+│  Quality Gate   (src/evaluation_metrics.py)          │
+│  6 heuristic RAGAS-style metrics → binary 1.0 / 0.0 │
+│  Grounded refusal detection → auto 1.0              │
+│  Failure classification: retrieval / gen / chunking  │
+└─────────────────────────────────────────────────────┘
+```
+
+---
+
+## Configuration (`src/config.py`)
 
 ```python
-# LLM Configuration
-OLLAMA_MODEL = "llama3.1"
-OLLAMA_URL = "http://localhost:11434/api/generate"
-OLLAMA_TEMPERATURE = 0.1
-OLLAMA_MAX_TOKENS = 800
+# ── Retrieval ──────────────────────────────────────
+TOP_K                = 5      # chunks retrieved per question
+SIMILARITY_THRESHOLD = 0.30    # lower → more results, higher → stricter
+CHUNK_SIZE           = 600     # characters per chunk
+CHUNK_OVERLAP        = 120     # overlap between consecutive chunks
+MAX_CONTEXT          = 12000   # max total context passed to LLM
 
-# Embedding Configuration
-EMBEDDING_MODEL = "all-MiniLM-L6-v2"
-EMBEDDING_DEVICE = "cpu"
+# ── LLM ───────────────────────────────────────────
+OLLAMA_MODEL       = "llama3.1"
+OLLAMA_TEMPERATURE = 0.1       # lower = more deterministic
+OLLAMA_MAX_TOKENS  = 1500      # longer answers improve faithfulness score
 
-# Retrieval Configuration
-TOP_K = 3                      # Retrieved chunks
-SIMILARITY_THRESHOLD = 0.50    # Minimum relevance score
-CHUNK_SIZE = 500              # Characters per chunk
-CHUNK_OVERLAP = 80            # Overlap between chunks
+# ── Embedding ──────────────────────────────────────
+EMBEDDING_MODEL  = "all-MiniLM-L6-v2"
+EMBEDDING_DEVICE = "cpu"       # "cuda" if GPU available
 
-# Quality Gate Thresholds
+# ── Quality Gate Thresholds ────────────────────────
 QUALITY_GATE_THRESHOLDS = {
-    "faithfulness": 0.85,
-    "answer_relevancy": 0.80,
+    "faithfulness":      0.85,
+    "answer_relevancy":  0.80,
     "context_precision": 0.75,
-    "context_recall": 0.75,
+    "context_recall":    0.75,
     "citation_accuracy": 0.90,
-    "grounded_refusal": 1.0,
-    "retrieval_f1": 0.70,
+    "retrieval_f1":      0.70,
 }
-
-# Evaluation Settings
-EVALUATION_ENABLED = False     # Auto-evaluate on upload
-EVALUATION_MODEL = "llama3.1"
-EVALUATION_TEMPERATURE = 0.0   # Deterministic
 ```
 
-### Modify Thresholds
+**Tuning tips:**
 
-Edit `QUALITY_GATE_THRESHOLDS` in `src/config.py`, then restart:
-
-```bash
-streamlit run app.py
-```
+| Goal | Change |
+|------|--------|
+| More answers found | Lower `SIMILARITY_THRESHOLD` (try 0.15) |
+| Less noise in retrieval | Raise `SIMILARITY_THRESHOLD` (try 0.30) |
+| Longer, more complete answers | Raise `OLLAMA_MAX_TOKENS` |
+| Faster responses | Lower `TOP_K` (try 5) |
+| More context for complex docs | Raise `MAX_CONTEXT` |
 
 ---
 
-## 🧪 Validation & Testing
-
-### Quick Validation
-
-```bash
-python test_quality_gate.py
-```
-
-Expected output:
-```
-[TEST] RAG Quality Gate - Framework Validation
-============================================================
-PASS - Imports
-PASS - Configuration
-PASS - Dataset Manager
-PASS - Metrics Calculator
-PASS - Quality Gate
-```
-
----
-
-## 📁 Project Structure
+## Project Structure
 
 ```
-.
-├── app.py                          # Main Streamlit app (Chat + Quality Gate)
-├── requirements.txt                # Python dependencies
-├── setup_quality_gate.py           # Initialize evaluation framework
-├── test_quality_gate.py            # Validation tests
+02-RAG-chat-on-document/
+│
+├── app.py                          ← Single entry point: chat + evaluation UI
+├── requirements.txt
+├── README.md
 │
 ├── src/
-│   ├── config.py                   # All configurable parameters
-│   ├── chat.py                     # LLM interaction
-│   ├── retriever.py                # Semantic search
-│   ├── vector_store.py             # ChromaDB management
-│   ├── embeddings.py               # Embedding generation
-│   ├── chunker.py                  # Text chunking
-│   ├── document_processor.py        # PDF/Excel extraction
-│   │
-│   ├── quality_gate.py             # Quality gate logic
-│   ├── evaluation_metrics.py        # Metric calculations
-│   ├── dataset_manager.py          # Golden QA dataset
-│   ├── evaluator.py                # Evaluation orchestration
-│   └── streamlit_quality_dashboard.py  # Dashboard UI
+│   ├── config.py                   ← All tuning parameters and thresholds
+│   ├── chat.py                     ← Ollama streaming, grounded prompt
+│   ├── retriever.py                ← Dual-pass semantic search
+│   ├── vector_store.py             ← ChromaDB read/write ops
+│   ├── embeddings.py               ← Sentence-Transformers
+│   ├── chunker.py                  ← Text splitting with overlap
+│   ├── document_processor.py       ← PDF + multi-strategy Excel ingestion
+│   ├── evaluation_metrics.py       ← 6 RAGAS-style heuristic metrics
+│   └── quality_gate.py             ← Threshold check → PASS / FAIL
 │
-├── chroma_db/                      # ChromaDB vector store
 ├── evaluation/
-│   ├── datasets/
-│   │   └── golden_qa_v1.0.json     # QA dataset for evaluation
-│   └── reports/                    # Evaluation reports (JSON/HTML)
-└── .env                            # Environment variables (optional)
+│   └── datasets/
+│       └── golden_qa_v1.0.json     ← 28 golden Q&A pairs
+│
+├── data/
+│   ├── pdf/
+│   │   ├── Employee_Handbook.pdf
+│   │   ├── Company_Policy.pdf
+│   │   └── Product_Specification.pdf
+│   └── excel/
+│       ├── Sales_Data.xlsx
+│       └── Customer_Data.xlsx
+│
+└── chroma_db/                      ← Vector store (auto-created on first upload)
 ```
 
 ---
 
-## 🔧 Troubleshooting
+## Golden Dataset (`evaluation/datasets/golden_qa_v1.0.json`)
 
-### "Ollama is not running"
-- In a new terminal, run: `ollama serve`
-- Keep it running in background during app usage
+**28 Q&A pairs** covering:
 
-### "No chunks indexed"
-- Upload documents first in Chat tab
-- Wait for success messages
-- Reload page
+| Source | Questions | Types |
+|--------|-----------|-------|
+| Employee_Handbook.pdf | 7 | annual leave, sick leave, benefits |
+| Company_Policy.pdf | 6 | security, expenses, travel |
+| Product_Specification.pdf | 5 | warranty, specs, connectivity |
+| Sales_Data.xlsx | 5 | regional sales, top products |
+| Customer_Data.xlsx | 2 | customer records |
+| Cross-doc / no-answer | 3 | **refusal tests** (`should_refuse: true`) |
 
-### "No evaluation results"
-- Import sample dataset (Dataset tab → Import Sample Dataset)
-- This takes ~5-30 seconds depending on document size
-
-### "Metrics are low"
-- Check documents are relevant to questions
-- Verify chunk size isn't too large (`CHUNK_SIZE` in config)
-- Review retrieved contexts in Chat tab
-- Adjust thresholds if needed
-
-### Import Errors
-```bash
-# Reinstall dependencies
-pip install --upgrade -r requirements.txt
-
-# Clear cache
-rm -rf chroma_db/ __pycache__ .streamlit/
-```
+**Difficulty split:** 10 easy · 12 medium · 6 hard  
+**Refusal questions** (3): CEO salary, external competitor pricing, employee criminal records — bot must refuse all three.
 
 ---
 
-## 📊 Performance Benchmarks
+## Troubleshooting
 
-| Operation | Time |
-|-----------|------|
-| App startup | 2-3 seconds |
-| Document ingestion | ~1-2 sec/page |
-| Single question | 2-5 seconds |
-| Full evaluation (5 Q's) | 30-60 seconds |
-| Dashboard load | ~2 seconds |
-
----
-
-## 🎯 Quality Gate Workflow
-
-```
-1. Upload Documents
-   ↓
-2. Ask Questions
-   ↓
-3. Get Answers with Citations
-   ↓
-4. Import Dataset (Quality Gate Tab)
-   ↓
-5. Run Evaluation
-   ↓
-6. Review Metrics
-   ↓
-7. Pass/Fail Decision
-   ↓
-8. Download Report
-```
+| Problem | Solution |
+|---------|----------|
+| Upload fails | Check Ollama is running: `ollama serve` |
+| "0 chunks indexed" | File already indexed — click 🗑️ Clear All Data and re-upload |
+| All metrics 0.00 | Bot refused but refusal not detected — answer may start with unexpected phrasing |
+| Faithfulness low | LLM added words not in context — the aggregate chunk may not include enough vocabulary |
+| Context Recall low | Retrieved chunks don't cover the answer — lower `SIMILARITY_THRESHOLD` or raise `TOP_K` |
+| Answer too short | Raise `OLLAMA_MAX_TOKENS` in config (currently 1500) |
+| Evaluation stuck | Ollama timeout — check `ollama serve` terminal for errors |
+| Module not found | `pip install --upgrade -r requirements.txt` |
 
 ---
 
-## 🏗️ Architecture Overview
+## Performance
 
-```
-┌─────────────────────────────────────┐
-│    Streamlit UI (Chat + Dashboard)  │
-└─────────────────────────────────────┘
-           ↓
-┌─────────────────────────────────────┐
-│     RAG Pipeline (Existing)         │
-│  - Retrieval (ChromaDB)             │
-│  - LLM (Ollama)                     │
-│  - Citations                        │
-└─────────────────────────────────────┘
-           ↓
-┌─────────────────────────────────────┐
-│   Quality Gate Framework (New)      │
-│  - Metrics (RAGAS)                  │
-│  - Dataset Manager                  │
-│  - Quality Gate Logic               │
-│  - Reporting & Dashboards           │
-└─────────────────────────────────────┘
-```
+| Operation | Typical Time |
+|-----------|-------------|
+| App startup (model warm-up) | 3–5 sec |
+| Document upload (5 files) | 15–30 sec |
+| Single Q&A + 6 metrics | 3–8 sec |
+| Full 28-question evaluation | 5–10 min |
 
 ---
 
-## 🔐 Security Notes
+## Security
 
-- **No credentials stored** - Local-only Ollama usage
-- **No data sent to cloud** - Everything runs locally
-- **Privacy-first** - All documents stay on your machine
-- **Optional authentication** - Can be added to Streamlit via `.streamlit/secrets.toml`
-
----
-
-## 📈 Next Steps
-
-1. ✅ Complete setup above
-2. ✅ Upload test documents (PDF/Excel)
-3. ✅ Ask 3-5 test questions
-4. ✅ View metrics in Quality Gate tab
-5. ✅ Download HTML report for stakeholders
-6. ✅ Adjust thresholds if needed
-7. ✅ Deploy to production
-
----
-
-## 🤝 Support
-
-### Common Questions
-
-**Q: Can I use different LLMs?**  
-A: Yes, change `OLLAMA_MODEL` in `src/config.py`. Supports any Ollama-compatible model.
-
-**Q: How do I increase quality scores?**  
-A: Improve documents (clarity, completeness) or adjust config (`CHUNK_SIZE`, `SIMILARITY_THRESHOLD`, `TOP_K`).
-
-**Q: Can this run without Ollama?**  
-A: Yes, with API keys for OpenAI/Claude/Gemini (requires code changes). See `src/config.py` for integration points.
-
-**Q: How is evaluation data stored?**  
-A: JSON files in `evaluation/datasets/` and `evaluation/reports/`. Editable with any text editor.
-
----
-
-## 📝 Version Info
-
-- **Python:** 3.11+
-- **Streamlit:** 1.41+
-- **ChromaDB:** 0.5+
-- **RAGAS:** 0.1+
-- **Status:** Production-Ready ✅
-- **Last Updated:** 2024-09-08
-
----
-
-## 🎓 Learning Resources
-
-- [RAGAS Framework](https://ragas.io) - RAG evaluation metrics
-- [LangChain Docs](https://python.langchain.com) - LLM orchestration
-- [Streamlit Docs](https://docs.streamlit.io) - Dashboard framework
-- [ChromaDB Docs](https://docs.trychroma.com) - Vector database
-
----
-
-## 🚀 Ready to Start?
-
-```bash
-# 1. Install
-pip install -r requirements.txt
-
-# 2. Start Ollama (new terminal)
-ollama serve
-
-# 3. Initialize (original terminal)
-python setup_quality_gate.py
-
-# 4. Run
-streamlit run app.py
-```
-
-Then open http://localhost:8501 and start chatting! 💬
-
----
-
-**Made with ❤️ for document-based Q&A with quality assurance**
+- **Local-only** — no data sent to any cloud service
+- **No API keys** — uses Ollama running on your machine
+- **Privacy-first** — all documents stay on your disk

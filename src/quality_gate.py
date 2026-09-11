@@ -49,11 +49,17 @@ class QualityGateEvaluator:
         """
         metric_results = []
 
-        # Evaluate each metric against its threshold
+        # Evaluate each metric against its threshold.
+        # Skip metrics absent from scores — they are batch-only (grounded_refusal)
+        # or RAGAS-only (answer_semantic_similarity) and not computed in live sessions.
+        # Treating an absent metric as 0.0 would cause permanent false FAILs.
         for metric_name, threshold in self.thresholds.items():
-            score = scores.get(metric_name, 0.0)
+            if metric_name not in scores:
+                continue
+            score = scores[metric_name]
+            if score is None:
+                continue
             passed = score >= threshold
-
             metric_results.append(
                 MetricResult(
                     name=metric_name,
@@ -76,53 +82,6 @@ class QualityGateEvaluator:
             summary=summary,
         )
 
-    def evaluate_batch(self, batch_scores: list[dict]) -> dict:
-        """Evaluate a batch of evaluation results.
-
-        Args:
-            batch_scores: list of evaluation dicts with 'scores' key
-
-        Returns:
-            dict with aggregate metrics and pass/fail status
-        """
-        if not batch_scores:
-            return {"status": "NO_DATA", "message": "No evaluation data available"}
-
-        # Aggregate scores across batch
-        metric_aggregates = {}
-        for eval_result in batch_scores:
-            scores = eval_result.get("scores", {})
-            for metric_name, score in scores.items():
-                if metric_name not in metric_aggregates:
-                    metric_aggregates[metric_name] = []
-                metric_aggregates[metric_name].append(score)
-
-        # Calculate averages
-        aggregated_scores = {}
-        for metric_name, scores in metric_aggregates.items():
-            aggregated_scores[metric_name] = sum(scores) / len(scores)
-
-        # Evaluate overall
-        result = self.evaluate_metrics(aggregated_scores)
-
-        return {
-            "status": result.overall_status,
-            "passed": result.passed,
-            "summary": result.summary,
-            "aggregate_scores": aggregated_scores,
-            "metric_results": [
-                {
-                    "name": m.name,
-                    "score": round(m.score, 4),
-                    "threshold": m.threshold,
-                    "passed": m.passed,
-                    "gap": round(m.threshold - m.score, 4) if not m.passed else 0.0,
-                }
-                for m in result.metric_results
-            ],
-            "sample_count": len(batch_scores),
-        }
-
     def _build_summary(self, metric_results: list[MetricResult], all_passed: bool) -> str:
         """Build a human-readable summary of the evaluation."""
         if all_passed:
@@ -136,23 +95,3 @@ class QualityGateEvaluator:
 
         return f"Quality gate FAILED. {needs}"
 
-    def get_metric_details(self, metric_name: str) -> dict:
-        """Get details about a specific metric."""
-        descriptions = {
-            "faithfulness": "Answer stays grounded in context without hallucinations",
-            "answer_relevancy": "Answer directly addresses the question",
-            "context_precision": "Retrieved context is relevant to the question",
-            "context_recall": "All relevant information is in retrieved context",
-            "citation_accuracy": "Cited facts are present in source documents",
-            "hallucination_score": "Answer doesn't invent facts (1.0 = no hallucinations)",
-            "retrieval_f1": "Balance of retrieval precision and recall",
-            "response_completeness": "Answer is sufficiently detailed and complete",
-        }
-
-        return {
-            "name": metric_name,
-            "description": descriptions.get(metric_name, "Unknown metric"),
-            "threshold": self.thresholds.get(metric_name, 0.0),
-            "min": 0.0,
-            "max": 1.0,
-        }

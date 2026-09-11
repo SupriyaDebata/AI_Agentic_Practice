@@ -25,17 +25,23 @@ def _to_noun_phrase(question: str) -> str:
 
 
 def _search_and_merge(question: str, collection: str, top_k: int) -> list[dict]:
-    """Run two search passes and merge by best score per unique chunk."""
+    """Run two search passes and merge by best score per unique chunk.
+
+    Fetches top_k * 2 candidates per pass so the merge pool is large enough
+    to still return top_k high-quality results after deduplication.
+    """
+    fetch_k = top_k * 2  # over-fetch to survive deduplication
+
     # Pass 1 -- full question (captures intent and sentence context)
     vec_full = embed_query(question)
-    hits_full = search_chunks(vec_full, collection, top_k)
+    hits_full = search_chunks(vec_full, collection, fetch_k)
 
     # Pass 2 -- noun-phrase (matches section headings and key terms more directly)
     noun_phrase = _to_noun_phrase(question)
     hits_kw: list[dict] = []
     if noun_phrase and noun_phrase != question.lower().strip():
         vec_kw = embed_query(noun_phrase)
-        hits_kw = search_chunks(vec_kw, collection, top_k)
+        hits_kw = search_chunks(vec_kw, collection, fetch_k)
 
     # Merge: keep highest score per unique text
     best: dict[str, dict] = {}
@@ -68,7 +74,8 @@ def get_context(question: str, collection: str) -> tuple[str, list[dict], list[s
     total = 0
     for i, h in enumerate(hits, 1):
         label = _TYPE_LABEL.get(h["type"], h["type"])
-        block = f"[Excerpt {i} | {h['source']}, Page/Sheet: {h['page']}, {label}]\n{h['text']}"
+        # Use "Source:" not "Excerpt N:" — LLMs echo numbered excerpt labels in answers
+        block = f"[Source: {h['source']}, Page/Sheet: {h['page']}, {label}]\n{h['text']}"
         if total + len(block) > config.MAX_CONTEXT:
             break
         parts.append(block)
