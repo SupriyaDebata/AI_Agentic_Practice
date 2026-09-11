@@ -1,9 +1,0 @@
-# Evaluation reports directory
-
-Generated evaluation results are stored here with timestamps.
-
-## Structure
-
-- `evaluation_report.json` - Latest machine-readable results
-- `evaluation_report.html` - Latest interactive HTML report
-- `historical/` - Archived timestamped reports
