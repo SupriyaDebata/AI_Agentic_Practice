@@ -36,6 +36,3 @@ Thumbs.db
 data/*.pdf
 data/*.xlsx
 data/*.xls
-**/.env
-**/__pycache__/
-**/chroma_db/

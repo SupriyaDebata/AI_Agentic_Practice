@@ -1,0 +1,26 @@
+Müller Bürotechnik GmbH
+Hauptstraße 45, 80333 München
+USt-IdNr: DE123456789
+
+RECHNUNG (INVOICE)
+
+Rechnungsnummer : MB-2024-0991
+Datum           : 10. Oktober 2024
+Rechnungsempfänger:
+  Continental Parts AG
+  Industriepark 12, 60528 Frankfurt
+
+Pos.  Beschreibung                  Menge   Einzelpreis     Gesamt
+-------------------------------------------------------------------
+  1   Drucker A4 Laserjet             3     1.200,00 €    3.600,00 €
+  2   Papier A4 (500 Bl.)            20        12,50 €      250,00 €
+  3   Toner-Kartusche                10        85,00 €      850,00 €
+-------------------------------------------------------------------
+Nettobetrag (Subtotal)                                  4.700,00 €
+MwSt. 19% (VAT)                                          893,00 €
+Gesamtbetrag (Total)                                    5.593,00 €
+-------------------------------------------------------------------
+Zahlungsziel: 30 Tage netto (Net 30)
+
+(European locale: period = thousands separator, comma = decimal.
+ 1.200,00 → 1200.00, 4.700,00 → 4700.00, 5.593,00 → 5593.00)

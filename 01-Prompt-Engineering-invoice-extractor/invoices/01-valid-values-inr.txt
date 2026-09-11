@@ -1,0 +1,22 @@
+Sharma & Sons Pvt Ltd
+42, Connaught Place, New Delhi - 110001
+GST No: 07AAICS1234A1Z5
+
+INVOICE
+
+Invoice No : INV-2024-1101
+Date       : 20 Nov 2024
+Bill To    : Horizon Retail Ltd
+             14, MG Road, Bengaluru - 560001
+
+Item              Qty    Rate      Amount
+-----------------------------------------
+Office Chair        5   ₹4,000   ₹20,000
+Whiteboard          2   ₹3,500    ₹7,000
+Marker Set         10     ₹250    ₹2,500
+-----------------------------------------
+Subtotal                          ₹29,500
+Tax (GST 18%)                      ₹5,310
+Total                             ₹34,810
+-----------------------------------------
+Payment Terms : Net 30

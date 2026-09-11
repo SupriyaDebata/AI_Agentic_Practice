@@ -1,0 +1,21 @@
+GlobalTech Supplies
+Registered in Ireland | VAT No: IE9876543B
+
+INVOICE
+
+Invoice No : GT-EUR-2024-0078
+Date       : 30 Sep 2024
+Bill To    : DataStream Corp
+             1 Infinite Loop, Dublin 4, Ireland
+
+Item                      Qty    Unit Price     Total
+------------------------------------------------------
+Server Rack Unit            2      EUR 850     EUR 1,700
+Network Switch              5      EUR 120       EUR 600
+Patch Cables (box)         10       EUR 25       EUR 250
+------------------------------------------------------
+Subtotal                                      EUR 2,550
+VAT (23%)                                       EUR 586.50
+Grand Total                                   EUR 3,136.50
+------------------------------------------------------
+Payment Terms: 30 days net

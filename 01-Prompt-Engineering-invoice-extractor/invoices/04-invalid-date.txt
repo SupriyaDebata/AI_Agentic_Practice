@@ -1,0 +1,20 @@
+Meridian Logistics Pvt Ltd
+Tower B, Cyber City, Gurugram - 122002
+
+INVOICE
+
+Invoice No : ML-2024-9988
+Date       : 15/15/2024
+Bill To    : Eastcoast Exports
+             Kandla Port, Gujarat - 370210
+
+Service                                  Amount
+-------------------------------------------------
+Freight Charges (Mumbai to Kandla)    ₹12,500.00
+Handling & Documentation               ₹2,000.00
+-------------------------------------------------
+Subtotal                              ₹14,500.00
+GST (18%)                              ₹2,610.00
+Total                                 ₹17,110.00
+-------------------------------------------------
+Payment Terms: Net 30

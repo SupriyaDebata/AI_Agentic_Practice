@@ -1,0 +1,21 @@
+BlueStar Consulting LLC
+500 Broadway, New York, NY 10012
+
+INVOICE
+
+Invoice #  : INV-NYC-0042
+Date       : 05 Jan 2025
+Bill To    : Pinnacle Ventures Inc
+             88 Wall Street, New York, NY 10005
+
+Description                        Amount
+------------------------------------------
+Strategy Consulting (10 hrs)      $2,000.00
+Market Research Report              $800.00
+------------------------------------------
+Subtotal                          $2,800.00
+Total                             $2,800.00
+------------------------------------------
+Payment Terms: Due on receipt
+
+Note: This invoice does not include any applicable taxes.

@@ -1,0 +1,22 @@
+TechGadgets Online Store
+Customer Invoice
+
+Invoice No : TG-ORD-2024-55120
+Date       : 22 Dec 2024
+Bill To    : Ramesh Iyer
+             12B, Nungambakkam, Chennai - 600034
+
+Item                          Qty    Price       Amount
+--------------------------------------------------------
+Wireless Keyboard               1   ₹1,800      ₹1,800
+USB-C Hub (7-in-1)              1   ₹2,200      ₹2,200
+Laptop Stand                    1   ₹1,200      ₹1,200
+Membership Discount (10%)       1       ₹0          ₹0
+Referral Credit                 -          -       -₹200
+--------------------------------------------------------
+Subtotal                                        ₹5,200
+GST (18%)                                         ₹936
+Discount Applied                                  -₹200
+Total Payable                                   ₹4,936
+--------------------------------------------------------
+Payment Terms: Paid online (UPI)

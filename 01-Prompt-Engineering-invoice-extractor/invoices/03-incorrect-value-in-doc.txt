@@ -1,0 +1,24 @@
+Apex Print Solutions
+Plot 7, Industrial Area, Pune - 411019
+
+TAX INVOICE
+
+Invoice No : APX-2024-0311
+Date       : 12 Oct 2024
+Bill To    : Nova Publishers Ltd
+             FC Road, Pune - 411004
+
+Item                  Qty    Rate       Amount
+-----------------------------------------------
+A3 Glossy Paper (pkg)  20   ₹250       ₹5,000
+Spiral Binding         50    ₹40       ₹2,000
+Lamination Sheets     100    ₹30       ₹3,000
+-----------------------------------------------
+Subtotal                               ₹1,000
+GST (18%)                                ₹180
+Total                                    ₹900
+-----------------------------------------------
+Payment Terms: Net 15
+
+(Note: Subtotal as printed is ₹1,000. Total as printed is ₹900.
+ Both figures extracted as-is from the document.)

@@ -1,0 +1,20 @@
+CrossBorder Trade Solutions
+123 Export Zone, Mumbai - 400001
+
+PROFORMA INVOICE
+
+Invoice No : CB-2024-0561
+Date       : 08 Mar 2024
+Bill To    : Pacific Imports LLC
+             Seattle, WA 98101, USA
+
+Item                  Qty    Rate          Amount
+--------------------------------------------------
+Industrial Components  50   ₹2,000       ₹1,00,000
+(converted at today's rate)
+
+Subtotal                                   ₹1,00,000
+Freight & Insurance                          $2,400
+Total                                        $3,640
+
+Payment Terms: 50% advance, 50% on delivery

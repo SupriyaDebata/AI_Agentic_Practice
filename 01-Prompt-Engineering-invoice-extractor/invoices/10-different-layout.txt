@@ -1,0 +1,23 @@
+--- RECEIPT ---
+Store: Metro Grocery, Bandra West, Mumbai
+Receipt #: RCT-78821
+Served by: Cashier 04
+Date & Time: 2024-11-14  18:32:05
+
+Qty  Description           Price
+  2  Organic Milk 1L       ₹138
+  1  Whole Wheat Bread     ₹65
+  3  Greek Yogurt 200g     ₹210
+  1  Butter 500g           ₹95
+  2  Free-range Eggs (6pk) ₹180
+
+                      ---------
+            Item Total  ₹688.00
+               GST 5%    ₹34.40
+         GRAND TOTAL    ₹722.40
+                      ---------
+     Cash Tendered      ₹800.00
+            Change       ₹77.60
+
+Thank you for shopping with us!
+Member Points Earned: 72

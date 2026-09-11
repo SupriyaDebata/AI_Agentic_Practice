@@ -1,0 +1,142 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Golden Q&A Dataset Schema",
+  "description": "Schema for RAG evaluation golden dataset",
+  "type": "object",
+  "required": ["dataset_id", "version", "metadata", "qa_pairs"],
+  "properties": {
+    "dataset_id": {
+      "type": "string",
+      "description": "Unique identifier for the dataset",
+      "examples": ["golden_v1.0"]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of dataset creation"
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version of the dataset",
+      "examples": ["1.0", "1.1"]
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["total_samples", "coverage"],
+      "properties": {
+        "total_samples": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Total number of Q&A pairs"
+        },
+        "train_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of training samples"
+        },
+        "test_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of test samples"
+        },
+        "coverage": {
+          "type": "object",
+          "description": "Distribution of question types",
+          "properties": {
+            "pdf_direct": { "type": "integer" },
+            "pdf_semantic": { "type": "integer" },
+            "excel_row": { "type": "integer" },
+            "excel_aggregate": { "type": "integer" },
+            "table_extraction": { "type": "integer" },
+            "no_answer_negative": { "type": "integer" },
+            "out_of_scope": { "type": "integer" }
+          }
+        }
+      }
+    },
+    "qa_pairs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "split", "question", "question_type", "difficulty", "should_refuse"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique question ID",
+            "examples": ["Q001", "Q002"]
+          },
+          "split": {
+            "type": "string",
+            "enum": ["train", "test"],
+            "description": "Dataset split (train or test)"
+          },
+          "question": {
+            "type": "string",
+            "description": "The question to ask the RAG system"
+          },
+          "ground_truth_answer": {
+            "type": ["string", "null"],
+            "description": "Expected answer (null for no-answer cases)"
+          },
+          "expected_citations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "source": { "type": "string" },
+                "page": { "type": "string" },
+                "type": { "type": "string", "enum": ["text", "table", "excel", "image"] },
+                "snippet": { "type": "string" }
+              }
+            },
+            "description": "Expected source citations"
+          },
+          "expected_context_chunks": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Expected context chunk IDs from vector store"
+          },
+          "question_type": {
+            "type": "string",
+            "enum": [
+              "direct",
+              "semantic_search",
+              "structured_data",
+              "no_answer",
+              "out_of_scope",
+              "hallucination_risk",
+              "multi_document"
+            ],
+            "description": "Type of question"
+          },
+          "difficulty": {
+            "type": "string",
+            "enum": ["easy", "medium", "hard"],
+            "description": "Expected difficulty level"
+          },
+          "reasoning": {
+            "type": "string",
+            "description": "Why this question tests the system"
+          },
+          "acceptable_paraphrases": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Alternative valid answers"
+          },
+          "should_refuse": {
+            "type": "boolean",
+            "description": "Whether the system should refuse (no-answer) for this question"
+          },
+          "expected_refusal": {
+            "type": "string",
+            "description": "Expected refusal phrase (if should_refuse=true)"
+          },
+          "reference_document": {
+            "type": ["string", "null"],
+            "description": "Primary source document"
+          }
+        }
+      }
+    }
+  }
+}

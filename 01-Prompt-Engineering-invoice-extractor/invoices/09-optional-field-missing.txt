@@ -1,0 +1,21 @@
+Zenith Web Services
+Unit 5, Tech Park, Bengaluru - 560103
+www.zenithweb.in
+
+INVOICE
+
+Invoice No : ZWS-2025-0019
+Date       : 03 Feb 2025
+Bill To    : Startup Hive Pvt Ltd
+             Koramangala, Bengaluru - 560034
+
+Service                                   Amount
+-------------------------------------------------
+Website Development (20 hrs @ ₹2,500)  ₹50,000
+UI/UX Design                           ₹15,000
+Domain & Hosting (1 year)               ₹5,000
+-------------------------------------------------
+Subtotal                                ₹70,000
+GST (18%)                               ₹12,600
+Total                                   ₹82,600
+-------------------------------------------------

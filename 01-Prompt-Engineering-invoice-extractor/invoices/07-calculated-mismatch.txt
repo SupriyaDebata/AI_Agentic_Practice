@@ -1,0 +1,28 @@
+SwiftCraft Manufacturers
+Plot 22, MIDC, Nashik - 422010
+GSTIN: 27AASCS5678B1Z3
+
+TAX INVOICE
+
+Invoice No : SC-2024-0844
+Date       : 17 Jul 2024
+Bill To    : BuildRight Constructions
+             Andheri East, Mumbai - 400069
+
+Description                   Qty    Rate         Amount
+----------------------------------------------------------
+Steel Rods (per bundle)        10   ₹3,500      ₹35,000
+Cement Bags (50kg)             20     ₹380        ₹7,600
+Sand (cubic meter)              5     ₹900        ₹4,500
+Hardware Fittings (set)         8     ₹850        ₹6,800
+----------------------------------------------------------
+Subtotal                                         ₹53,900
+CGST (9%)                                         ₹4,851
+SGST (9%)                                         ₹4,851
+Total Tax (GST 18%)                               ₹9,702
+Grand Total                                      ₹1,250
+----------------------------------------------------------
+Payment Terms: Net 45
+
+(Note: Subtotal ₹53,900 + Tax ₹9,702 ≠ Grand Total ₹1,250.
+ Extract all three as printed; flag calculation inconsistency.)
