@@ -1,0 +1,9 @@
+[
+  {"product_id": "TS-01", "name": "Cotton T-Shirt", "category": "T-Shirts", "price": 499, "stock": 12},
+  {"product_id": "TS-02", "name": "Polo T-Shirt", "category": "T-Shirts", "price": 699, "stock": 8},
+  {"product_id": "JN-04", "name": "Denim Jeans", "category": "Jeans", "price": 1499, "stock": 0},
+  {"product_id": "JN-05", "name": "Slim Fit Jeans", "category": "Jeans", "price": 1299, "stock": 5},
+  {"product_id": "JK-07", "name": "Casual Jacket", "category": "Jackets", "price": 2499, "stock": 3},
+  {"product_id": "SH-10", "name": "Running Shoes", "category": "Shoes", "price": 1999, "stock": 7},
+  {"product_id": "CP-15", "name": "Baseball Cap", "category": "Caps", "price": 349, "stock": 20}
+]

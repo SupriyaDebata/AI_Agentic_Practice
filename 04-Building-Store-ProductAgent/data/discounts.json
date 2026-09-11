@@ -1,0 +1,7 @@
+[
+  {"product_category": "T-Shirts", "minimum_quantity": 3, "discount_percentage": 10},
+  {"product_category": "Jeans", "minimum_quantity": 2, "discount_percentage": 5},
+  {"product_category": "Jackets", "minimum_quantity": 2, "discount_percentage": 8},
+  {"product_category": "Shoes", "minimum_quantity": 2, "discount_percentage": 7},
+  {"product_category": "Caps", "minimum_quantity": 5, "discount_percentage": 15}
+]

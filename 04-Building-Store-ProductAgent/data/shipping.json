@@ -1,0 +1,9 @@
+[
+  {"pincode": "700001", "delivery_days": 3},
+  {"pincode": "751001", "delivery_days": 2},
+  {"pincode": "110001", "delivery_days": 4},
+  {"pincode": "400001", "delivery_days": 3},
+  {"pincode": "600001", "delivery_days": 5},
+  {"pincode": "560001", "delivery_days": 2},
+  {"pincode": "380001", "delivery_days": 4}
+]
