@@ -47,20 +47,21 @@ TOOL_SCHEMAS = [
         "function": {
             "name": "price_order",
             "description": (
+                "⚠️ PREREQUISITE: check_stock MUST be called first and return available=true. "
                 "Calculate the total price for a product quantity, including any applicable discount. "
-                "ONLY call this AFTER check_stock confirms the product is available (available=true). "
-                "Use the same product name or ID that was passed to check_stock."
+                "NEVER call this before confirming stock availability. "
+                "Use the EXACT same product name or ID that was passed to check_stock."
             ),
             "parameters": {
                 "type": "object",
                 "properties": {
                     "product_id": {
                         "type": "string",
-                        "description": "Product name or ID — same value used in check_stock",
+                        "description": "Product name or ID — MUST be the exact same value used in check_stock call",
                     },
                     "quantity": {
                         "type": "integer",
-                        "description": "Quantity to order",
+                        "description": "Quantity to order (must match check_stock quantity)",
                     },
                 },
                 "required": ["product_id", "quantity"],
@@ -72,18 +73,19 @@ TOOL_SCHEMAS = [
         "function": {
             "name": "delivery_eta",
             "description": (
-                "Get the estimated delivery time in days for a destination. "
-                "ONLY call this when the user provides a numeric 6-digit PIN code. "
-                "If the user provides a city or location name (e.g. 'Bhubaneswar', 'Delhi') "
-                "instead of a PIN code, do NOT call this tool — "
-                "ask: 'Could you please share the 6-digit PIN code for that location?'"
+                "🚫 ONLY call this when the user explicitly provides an actual 6-digit numeric PIN code. "
+                "Do NOT guess, calculate, or infer PIN codes from city/location names. "
+                "If the user says 'Bhubaneswar' or 'Delhi' instead of a PIN: "
+                "Ask FIRST: 'Could you please share the 6-digit PIN code for [location]?' "
+                "Then WAIT for the user's response before calling this tool. "
+                "Only then call this tool with the actual PIN code the user provided."
             ),
             "parameters": {
                 "type": "object",
                 "properties": {
                     "pincode": {
                         "type": "string",
-                        "description": "6-digit numeric Indian PIN code (e.g. '700001')",
+                        "description": "6-digit numeric Indian PIN code (MUST be provided explicitly by user, never guessed)",
                     },
                 },
                 "required": ["pincode"],
@@ -217,7 +219,45 @@ def _coerce_tool_input(tool_name: str, raw_input: dict) -> dict:
     return result
 
 
-def _execute_tool(tool_name: str, tool_input: dict) -> dict:
+def _validate_tool_call(tool_name: str, state: AgentState) -> dict | None:
+    """
+    Validate that tool call respects the mandatory sequence:
+    1. check_stock must be called first
+    2. price_order only after successful check_stock
+    3. delivery_eta only when stock checked (and user provided PIN)
+    Returns error dict if invalid, None if valid.
+    """
+    trace = state.trace
+
+    if tool_name == "price_order":
+        if not any(t["tool"] == "check_stock" and not t["result"].get("error") for t in trace):
+            return {
+                "error": True,
+                "message": (
+                    "❌ You must call check_stock FIRST to verify stock availability before pricing. "
+                    "Please call check_stock first with the product name/ID and quantity."
+                ),
+            }
+
+    if tool_name == "delivery_eta":
+        if not any(t["tool"] == "check_stock" and not t["result"].get("error") for t in trace):
+            return {
+                "error": True,
+                "message": (
+                    "❌ You must check stock first before asking for delivery estimates. "
+                    "Please call check_stock with the product name/ID and quantity first."
+                ),
+            }
+
+    return None
+
+
+def _execute_tool(tool_name: str, tool_input: dict, state: AgentState) -> dict:
+    validation_error = _validate_tool_call(tool_name, state)
+    if validation_error:
+        logger.warning(f"Tool call rejected: {tool_name} — {validation_error['message']}")
+        return validation_error
+
     fn = TOOL_MAP.get(tool_name)
     if not fn:
         return {"error": True, "message": f"Unknown tool: {tool_name}"}
@@ -301,7 +341,7 @@ def run_agent(user_message: str, state: AgentState) -> str:
             if text_tc:
                 tool_name, tool_input = text_tc
                 logger.info(f"[text-fallback] Detected tool call in text: {tool_name}({tool_input})")
-                result = _execute_tool(tool_name, tool_input)
+                result = _execute_tool(tool_name, tool_input, state)
                 _update_state_from_tool(state, tool_name, tool_input, result)
                 # Feed result back as a plain user message (text-fallback path)
                 messages.append({
@@ -338,7 +378,7 @@ def run_agent(user_message: str, state: AgentState) -> str:
 
             call_id = tc.get("id", "")
             logger.info(f"[api] Calling tool: {tool_name}({tool_input})")
-            result = _execute_tool(tool_name, tool_input)
+            result = _execute_tool(tool_name, tool_input, state)
             _update_state_from_tool(state, tool_name, tool_input, result)
 
             messages.append({

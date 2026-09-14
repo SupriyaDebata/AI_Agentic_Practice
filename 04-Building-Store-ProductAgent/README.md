@@ -1,6 +1,6 @@
 # Store Assistant Agent
 
-A simple educational agent demonstrating Week 4 "Building Agents" concepts.  
+A simple store agent demonstrating  "Building Agents" concepts.  
 Runs **fully locally** using [Ollama](https://ollama.com) — no API key required.
 
 ## Prerequisites

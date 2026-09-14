@@ -11,4 +11,5 @@ OLLAMA_MODEL: str = os.getenv("OLLAMA_MODEL", "llama3.1")
 OLLAMA_HOST: str = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 
 # Agent safety limit — prevents infinite tool-call loops
-MAX_ITERATIONS: int = int(os.getenv("MAX_ITERATIONS", "10"))
+# Set to 5 to fail faster when agent loops (typically 1-3 steps needed)
+MAX_ITERATIONS: int = int(os.getenv("MAX_ITERATIONS", "5"))
