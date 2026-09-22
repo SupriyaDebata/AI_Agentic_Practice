@@ -6,10 +6,17 @@ logger = logging.getLogger(__name__)
 
 DATA_PATH = Path(__file__).parent.parent / "data" / "inventory.json"
 
+# CACHE: Load inventory once at module level (not on every function call)
+_INVENTORY_CACHE = None
+
 
 def _load_inventory() -> list[dict]:
-    with open(DATA_PATH) as f:
-        return json.load(f)
+    """Load inventory from cache (or from file on first call)."""
+    global _INVENTORY_CACHE
+    if _INVENTORY_CACHE is None:
+        with open(DATA_PATH) as f:
+            _INVENTORY_CACHE = json.load(f)
+    return _INVENTORY_CACHE
 
 
 def _normalise(text: str) -> str:

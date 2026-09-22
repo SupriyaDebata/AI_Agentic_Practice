@@ -9,15 +9,22 @@ logger = logging.getLogger(__name__)
 INVENTORY_PATH = Path(__file__).parent.parent / "data" / "inventory.json"
 DISCOUNTS_PATH = Path(__file__).parent.parent / "data" / "discounts.json"
 
+# CACHE: Load discounts once at module level (not on every function call)
+_DISCOUNTS_CACHE = None
+
 
 def _load_inventory() -> list[dict]:
-    with open(INVENTORY_PATH) as f:
-        return json.load(f)
+    from tools.inventory import _load_inventory as load_inv
+    return load_inv()
 
 
 def _load_discounts() -> list[dict]:
-    with open(DISCOUNTS_PATH) as f:
-        return json.load(f)
+    """Load discounts from cache (or from file on first call)."""
+    global _DISCOUNTS_CACHE
+    if _DISCOUNTS_CACHE is None:
+        with open(DISCOUNTS_PATH) as f:
+            _DISCOUNTS_CACHE = json.load(f)
+    return _DISCOUNTS_CACHE
 
 
 def price_order(product_id: str, quantity: int) -> dict:

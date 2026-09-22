@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.env
+data/catalog.db
+data/vector_store/
+data/bm25_index.pkl
+*.egg-info/
+dist/
+build/
+.coverage
+htmlcov/

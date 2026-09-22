@@ -20,22 +20,22 @@ TOOL_SCHEMAS = [
         "function": {
             "name": "check_stock",
             "description": (
-                "Check whether the requested quantity of a product is available in stock. "
-                "Pass the product name exactly as the user said it "
-                "(e.g. 'polo t-shirt', 'denim jeans', 'running shoes'). "
-                "The tool resolves the name automatically. "
-                "If the user does not specify a quantity, use 1."
+                "CHECK PRODUCT AVAILABILITY IN STOCK. Call this FIRST for any product inquiry. "
+                "Accepts product name as user said it (e.g. 'cotton t-shirt', 'denim jeans', 'running shoes'). "
+                "Returns: {available: true/false, stock: number, product_name: string, product_id: string} "
+                "ONLY proceed to price_order if available=true. "
+                "If user didn't specify quantity, use 1."
             ),
             "parameters": {
                 "type": "object",
                 "properties": {
                     "product_id": {
                         "type": "string",
-                        "description": "Product name or product ID as given by the user",
+                        "description": "Product name exactly as user said (e.g. 'cotton t-shirt')",
                     },
                     "quantity": {
                         "type": "integer",
-                        "description": "Quantity requested. Default to 1 if not specified.",
+                        "description": "Quantity requested. Default to 1 if user didn't specify.",
                     },
                 },
                 "required": ["product_id", "quantity"],
@@ -47,21 +47,22 @@ TOOL_SCHEMAS = [
         "function": {
             "name": "price_order",
             "description": (
-                "⚠️ PREREQUISITE: check_stock MUST be called first and return available=true. "
-                "Calculate the total price for a product quantity, including any applicable discount. "
-                "NEVER call this before confirming stock availability. "
-                "Use the EXACT same product name or ID that was passed to check_stock."
+                "GET EXACT PRICE WITH DISCOUNT. Only call if check_stock returned available=true. "
+                "Returns: {unit_price, subtotal, discount_percentage, discount_amount, final_price, currency: 'INR'} "
+                "DISCOUNT RULES: T-Shirts(3+→10%), Jeans(2+→5%), Jackets(2+→8%), Shoes(2+→7%), Caps(5+→15%) "
+                "ALWAYS use exact final_price from result. If discount_percentage=0, no discount applies. "
+                "Use same product_id and quantity as check_stock call."
             ),
             "parameters": {
                 "type": "object",
                 "properties": {
                     "product_id": {
                         "type": "string",
-                        "description": "Product name or ID — MUST be the exact same value used in check_stock call",
+                        "description": "Same product name/ID used in check_stock",
                     },
                     "quantity": {
                         "type": "integer",
-                        "description": "Quantity to order (must match check_stock quantity)",
+                        "description": "Same quantity as check_stock",
                     },
                 },
                 "required": ["product_id", "quantity"],
@@ -73,19 +74,20 @@ TOOL_SCHEMAS = [
         "function": {
             "name": "delivery_eta",
             "description": (
-                "🚫 ONLY call this when the user explicitly provides an actual 6-digit numeric PIN code. "
-                "Do NOT guess, calculate, or infer PIN codes from city/location names. "
-                "If the user says 'Bhubaneswar' or 'Delhi' instead of a PIN: "
-                "Ask FIRST: 'Could you please share the 6-digit PIN code for [location]?' "
-                "Then WAIT for the user's response before calling this tool. "
-                "Only then call this tool with the actual PIN code the user provided."
+                "GET DELIVERY TIMEFRAME FOR A PIN CODE. Only call when user provides ACTUAL 6-digit PIN. "
+                "DO NOT guess PINs from city names (Delhi→110001, Mumbai→400001, etc). "
+                "If user says location name instead of PIN, ask: 'What's the 6-digit PIN for [location]?' "
+                "Then WAIT for user's response before calling this tool. "
+                "Returns: {pincode, available: true/false, estimated_delivery_days: number} "
+                "Supported PINs: 700001(3 days), 751001(2 days), 110001(4 days), 400001(3 days), "
+                "600001(5 days), 560001(2 days), 380001(4 days)"
             ),
             "parameters": {
                 "type": "object",
                 "properties": {
                     "pincode": {
                         "type": "string",
-                        "description": "6-digit numeric Indian PIN code (MUST be provided explicitly by user, never guessed)",
+                        "description": "6-digit Indian PIN code provided explicitly by user",
                     },
                 },
                 "required": ["pincode"],
@@ -120,6 +122,13 @@ _NOISE_RE = re.compile(
     r")",
     re.IGNORECASE,
 )
+
+
+def _extract_pincode_from_text(text: str) -> str | None:
+    """Extract 6-digit PIN code from text if present."""
+    # Look for 6-digit numbers (Indian PINs are 6 digits)
+    pins = re.findall(r'\b\d{6}\b', text)
+    return pins[0] if pins else None
 
 
 def _is_out_of_scope(text: str) -> bool:
@@ -305,6 +314,63 @@ def _build_context_message(state: AgentState) -> dict | None:
     }
 
 
+def _build_response_from_tools(state: AgentState, last_trace_steps: list[dict]) -> str | None:
+    """Build accurate response from actual tool results (prevents LLM hallucination of prices)."""
+    if not last_trace_steps:
+        return None
+    
+    # Look for tool results in trace
+    stock_result = None
+    price_result = None
+    delivery_result = None
+    
+    for step in last_trace_steps:
+        if step["tool"] == "check_stock" and not step["result"].get("error"):
+            stock_result = step["result"]
+        elif step["tool"] == "price_order" and not step["result"].get("error"):
+            price_result = step["result"]
+        elif step["tool"] == "delivery_eta" and not step["result"].get("error"):
+            delivery_result = step["result"]
+    
+    # Only build response if we have stock info
+    if not stock_result:
+        return None
+    
+    # Check if product is out of stock
+    if not stock_result.get("available"):
+        stock = stock_result.get("stock", 0)
+        requested = 1
+        for step in last_trace_steps:
+            if step["tool"] == "check_stock":
+                requested = step["input"].get("quantity", 1)
+                break
+        return f"I'm sorry, we only have {stock} in stock (you requested {requested}). Would you like {stock} instead?"
+    
+    # Build response with available product
+    product_name = stock_result.get("product_name", "Product")
+    quantity = stock_result.get("quantity") or price_result.get("quantity", 1) if price_result else 1
+    
+    parts = [f"✓ {quantity} {product_name}(s) in stock"]
+    
+    # Add price if available
+    if price_result:
+        final_price = price_result.get("final_price", 0)
+        discount_pct = price_result.get("discount_percentage", 0)
+        
+        if discount_pct > 0:
+            parts.append(f"₹{final_price:.2f} ({int(discount_pct)}% off)")
+        else:
+            parts.append(f"₹{final_price:.2f}")
+    
+    # Add delivery info if available
+    if delivery_result and delivery_result.get("available"):
+        days = delivery_result.get("estimated_delivery_days", "?")
+        pin = delivery_result.get("pincode", "")
+        parts.append(f"Delivery in {days} day(s) to PIN {pin}")
+    
+    return ". ".join(parts) + "."
+
+
 def run_agent(user_message: str, state: AgentState) -> str:
     """Run the ReAct agent loop for one user turn. Returns clean final text."""
     state.messages.append({"role": "user", "content": user_message})
@@ -354,8 +420,19 @@ def run_agent(user_message: str, state: AgentState) -> str:
                 })
                 continue  # loop — let LLM decide next step
 
-            # Genuine final text response
-            final_text = _clean_response(raw)
+            # Try to build response from actual tool results (prevents price hallucination)
+            trace_len_before = len(state.trace)
+            builtin_response = _build_response_from_tools(state, state.trace[trace_len_before:])
+            
+            if builtin_response:
+                # Use the accurate response built from tool results
+                final_text = builtin_response
+                logger.info(f"Using response built from tool results: {final_text}")
+            else:
+                # Fallback: use LLM's response (cleaned)
+                final_text = _clean_response(raw)
+                logger.info(f"Using LLM response (cleaned): {final_text}")
+            
             state.messages.append({"role": "assistant", "content": final_text})
             
             # Detect stop reason based on response content
@@ -386,6 +463,26 @@ def run_agent(user_message: str, state: AgentState) -> str:
                 "tool_call_id": call_id,
                 "content": json.dumps(result),
             })
+        
+        # Auto-call delivery_eta if price_order was called but delivery_eta wasn't, and PIN is present
+        price_order_called = any(step["tool"] == "price_order" for step in state.trace)
+        delivery_eta_called = any(step["tool"] == "delivery_eta" for step in state.trace)
+        
+        if price_order_called and not delivery_eta_called:
+            # Check all messages for a PIN
+            full_text = " ".join(state.messages[-1].get("content", "") for m in state.messages if isinstance(m.get("content"), str))
+            pin = _extract_pincode_from_text(full_text)
+            
+            if pin:
+                logger.info(f"Auto-calling delivery_eta with detected PIN: {pin}")
+                delivery_result = delivery_eta(pin)
+                _update_state_from_tool(state, "delivery_eta", {"pincode": pin}, delivery_result)
+                messages.append({
+                    "role": "tool",
+                    "tool_call_id": f"auto-{len(state.trace)}",
+                    "content": json.dumps(delivery_result),
+                })
+                # Don't continue yet - let LLM see this result and formulate final response
 
     # Max iterations reached - grounded refusal with explanation
     state.stop_reason = StopReason.MAX_ITERATIONS
